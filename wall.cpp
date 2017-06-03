@@ -6,6 +6,7 @@
 
 #define mWall "modeleBlend/wall.obj"
 
+using namespace glm;
 
 Wall::Wall()
 {
@@ -15,6 +16,10 @@ Wall::Wall()
         printf("Nie udało się wczytać!");
         exit(1);
     }
+    position = vec3(1.0,1.0,1.0);
+    rotation = vec3(0.0,0.0,0.0);
+    scale = vec3(1.0,1.0,1.0);
+    speed = 0.05;
 }
 
 Wall::~Wall()
@@ -24,7 +29,7 @@ Wall::~Wall()
     TEMPnormals.clear();
 }
 
-void Wall::drawSolid(GLuint tex)
+void Wall::drawSolid(GLuint &tex,mat4 &V)
 {
     glEnable(GL_NORMALIZE);
 
@@ -33,6 +38,12 @@ void Wall::drawSolid(GLuint tex)
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glBindTexture(GL_TEXTURE_2D,tex);
+
+    mat4 M=mat4(1.0f);
+    M=translate(M,this->position);
+    M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
+    M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
+    glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
     glNormalPointer(GL_FLOAT,sizeof(float)*3,&(this->TEMPnormals[0]));
