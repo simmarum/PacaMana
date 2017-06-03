@@ -31,7 +31,6 @@ bool loadOBJ( const char * path,
         int res = fscanf(file, "%s", lineHeader);
         if (res == EOF)
             break;
-        printf("%s\n",lineHeader);
         if ( strcmp( lineHeader, "v" ) == 0 )
         {
             float x;
@@ -39,8 +38,8 @@ bool loadOBJ( const char * path,
             float z;
             fscanf(file, "%f %f %f\n", &x, &y, &z );
             temp_vertices.push_back(x);
+            temp_vertices.push_back(-z);
             temp_vertices.push_back(y);
-            temp_vertices.push_back(z);
         }
         else if ( strcmp( lineHeader, "vt" ) == 0 )
         {
@@ -57,8 +56,8 @@ bool loadOBJ( const char * path,
             float nz;
             fscanf(file, "%f %f %f\n", &nx, &ny, &nz );
             temp_normals.push_back(nx);
+            temp_normals.push_back(-nz);
             temp_normals.push_back(ny);
-            temp_normals.push_back(nz);
         }
         else if ( strcmp( lineHeader, "f" ) == 0 )
         {
@@ -82,7 +81,6 @@ bool loadOBJ( const char * path,
         }
     }
     vCount = vertexIndices.size();
-    printf("%u\n",vertexIndices.size()*3);
     for( unsigned int i=0; i<vertexIndices.size(); i++ )
     {
         unsigned int vertexIndex = 3*(vertexIndices[i]-1);
@@ -93,7 +91,6 @@ bool loadOBJ( const char * path,
         vertex = temp_vertices[ vertexIndex+2 ];
         out_vertices.push_back(vertex);
     }
-    printf("%u\n",normalIndices.size());
         for( unsigned int i=0; i<normalIndices.size(); i++ )
     {
         unsigned int normalIndex = 3*(normalIndices[i]-1);
@@ -104,7 +101,6 @@ bool loadOBJ( const char * path,
         normal = temp_normals[ normalIndex+2 ];
         out_normals.push_back(normal);
     }
-    printf("%u\n",normalIndices.size());
         for( unsigned int i=0; i<uvIndices.size(); i++ )
     {
         unsigned int uvIndex = 2*(uvIndices[i]-1);

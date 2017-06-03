@@ -35,15 +35,28 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <string>
 
 #define twall "tekstury/test.png"
+#define tfloor "tekstury/floor.png"
+
 using namespace glm;
+
+
+Wall *sciana = new Wall();
+Floor *podloga = new Floor();
+Map *mapa = new Map();
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
 float speed_x=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi x
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
-GLuint tex;
-GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+float camera_speed=0.05;
+float camera_far = 4;
+vec3 camera = vec3(sciana->position.x-3.6,sciana->position.y+1.6,sciana->position.z-3.6);
+vec3 look = vec3(0.0,0.0,0.0);
 
-Wall *sciana = new Wall();
+GLuint texSciana;
+GLuint texPodloga;
+
+
+
 // Read our .obj file
 std::vector< float > TEMPvertices;
 std::vector< float > TEMPuvs;
@@ -51,13 +64,15 @@ std::vector< float > TEMPnormals; // Won't be used at the moment.
 std::vector< float > TEMPcolor;
 unsigned int TEMPvCount;
 
-void wypiszvector(std::vector <float> name,char c[],int modulo){
+void wypiszvector(std::vector <float> name,char c[],int modulo)
+{
     printf("\n%s\n",c);
-for(int i=0;i<name.size();i++){
+    for(int i=0; i<name.size(); i++)
+    {
         if(i%modulo == 0) printf("\n");
         if(i%(modulo*modulo)==0) printf("%d\n",i/(modulo*modulo));
-    printf("%f\t",name[i]);
-}
+        printf("%f\t",name[i]);
+    }
 }
 
 //Procedura obsługi błędów
@@ -82,7 +97,35 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (key == GLFW_KEY_RIGHT) speed_y=-PI/2;
         if (key == GLFW_KEY_UP) speed_x=PI/2;
         if (key == GLFW_KEY_DOWN) speed_x=-PI/2;
+
+        if (key == GLFW_KEY_W)
+        {
+            sciana->position.x += cos(sciana->rotation.y)*sciana->speed;
+            sciana->position.z -= sin(sciana->rotation.y)*sciana->speed;
+        }
+        if (key == GLFW_KEY_S)
+        {
+            sciana->position.x -= cos(sciana->rotation.y)*sciana->speed;
+            sciana->position.z += sin(sciana->rotation.y)*sciana->speed;
+        }
     }
+    if (action == GLFW_REPEAT )
+    {
+        if (key == GLFW_KEY_W)
+        {
+            sciana->position.x += cos(sciana->rotation.y)*sciana->speed;
+            sciana->position.z -= sin(sciana->rotation.y)*sciana->speed;
+        }
+        if (key == GLFW_KEY_S)
+        {
+
+            sciana->position.x -= cos(sciana->rotation.y)*sciana->speed;
+            sciana->position.z += sin(sciana->rotation.y)*sciana->speed;
+
+        }
+    }
+    printf("CAMERA: X=%f Y=%f Z=%f\n",camera.x,camera.y,camera.z);
+    printf("Sciana: X=%f Y=%f Z=%f\n",sciana->position.x,sciana->position.y,sciana->position.z);
 
     if (action == GLFW_RELEASE)
     {
@@ -92,55 +135,99 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (key == GLFW_KEY_DOWN) speed_x=0;
     }
 }
+void LetItBeLight()
+{
+    GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+    GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    GLfloat position0[] = { -2.0f, 2.0f, -2.0f, 1.0f };
+    GLfloat position1[] = { -2.0f, 2.0f, 2.0f, 1.0f };
+    GLfloat position2[] = { 2.0f, 2.0f, -2.0f, 1.0f };
+    GLfloat position3[] = { 2.0f, 2.0f, 2.0f, 1.0f };
+    glEnable(GL_LIGHTING);
 
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT0, GL_POSITION, position0);
+
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT1, GL_POSITION, position1);
+
+    glEnable(GL_LIGHT2);
+    glLightfv(GL_LIGHT2, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT2, GL_POSITION, position2);
+
+    glEnable(GL_LIGHT3);
+    glLightfv(GL_LIGHT3, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT3, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT3, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT3, GL_POSITION, position3);
+
+}
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window)
 {
+
     //************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
     glfwSetFramebufferSizeCallback(window, windowResize); //Zarejestruj procedurę obsługi zmiany rozdzielczości bufora ramki
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
 
-    glClearColor(0,0,0,1); //Ustaw kolor czyszczenia ekranu
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    LetItBeLight(); // swiatlo
 
-    glEnable(GL_LIGHTING); //Włącz tryb cieniowania
-    glEnable(GL_LIGHT0); //Włącz zerowe źródło światła
     glEnable(GL_DEPTH_TEST); //Włącz używanie budora głębokości
-    //glEnable(GL_COLOR_MATERIAL); //Włącz śledzenie kolorów przez materiał
 
-    //Wczytanie i import obrazka – w initOpenGLProgram
-    //Wczytanie do pamięci komputera
+    ///Wczytanie i import obrazka – w initOpenGLProgram
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
-    //Wczytaj obrazek
-    unsigned error = lodepng::decode(image, width, height, twall);
-    if(error != 0) {
-            printf("%s\n",lodepng_error_text(error));
-            exit(1);
-    }
 
+    /// - > Wczytaj obrazek - sciana
+    image.clear();
+    unsigned error = lodepng::decode(image, width, height, twall);
+    if(error != 0)
+    {
+        printf("%s\n",lodepng_error_text(error));
+        exit(1);
+    }
     //Import do pamięci karty graficznej
-    glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
-    glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+    glGenTextures(1,&texSciana); //Zainicjuj jeden uchwyt
+    glBindTexture(GL_TEXTURE_2D, texSciana); //Uaktywnij uchwyt
     //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
-
     //Bilinear filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_NORMALIZE);
 
-  //  bool res = loadOBJ("modeleBlend/wall.obj", TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
-	//if(!res) {
-  //      printf("Nie udało się wczytać!");
-//	}
-	printf("koniec\n");
-    wypiszvector(TEMPvertices,"verticies",3);
-    wypiszvector(TEMPuvs,"uvs",2);
-    wypiszvector(TEMPnormals,"normal",3);
+    /// - > Wczytaj obrazek - podloga
+    image.clear();
+    error = lodepng::decode(image, width, height, tfloor);
+    if(error != 0)
+    {
+        printf("%s\n",lodepng_error_text(error));
+        exit(1);
+    }
+    //Import do pamięci karty graficznej
+    glGenTextures(1,&texPodloga); //Zainicjuj jeden uchwyt
+    glBindTexture(GL_TEXTURE_2D, texPodloga); //Uaktywnij uchwyt
+    //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+    //Bilinear filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_NORMALIZE);
+
+
 
 }
 
@@ -154,25 +241,17 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
     //***Przygotowanie do rysowania****
     mat4 P=perspective(50.0f*PI/180.0f,aspect,1.0f,50.0f); //Wylicz macierz rzutowania P
     mat4 V=lookAt( //Wylicz macierz widoku
-               vec3(0.0f,0.0f,-5.0f),
-               vec3(0.0f,0.0f,0.0f),
+               vec3(sciana->position.x-camera_far*cos(sciana->rotation.y),
+                    sciana->position.y+1.0,
+                    sciana->position.z+camera_far*sin(sciana->rotation.y)),
+               vec3(sciana->position.x,sciana->position.y,sciana->position.z),
                vec3(0.0f,1.0f,0.0f));
     glMatrixMode(GL_PROJECTION); //Włącz tryb modyfikacji macierzy rzutowania
     glLoadMatrixf(value_ptr(P)); //Załaduj macierz rzutowania
     glMatrixMode(GL_MODELVIEW);  //Włącz tryb modyfikacji macierzy model-widok
 
-    /// TEST WCZYTYWANIA Z OBJ
-
-
-
-    //Rysowanie kostki
-    //1. Wyliczenie i załadowanie macierzy modelu
-    mat4 M=mat4(1.0f);
-    M=rotate(M,angle_x,vec3(1.0f,0.0f,0.0f));
-    M=rotate(M,angle_y,vec3(0.0f,1.0f,0.0f));
-    glLoadMatrixf(value_ptr(V*M));
-
-    sciana->drawSolid(tex);
+    sciana->drawSolid(texSciana,V);
+    podloga->drawSolid(texPodloga,V);
 
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
@@ -180,6 +259,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
 
 int main(void)
 {
+    mapa->drawMapInConsole();
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
@@ -218,14 +298,15 @@ int main(void)
     //Główna pętla
     while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
     {
-        angle_x+=speed_x*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
-        angle_y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
+        sciana->rotation.x+=speed_x*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
+        sciana->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
         drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
     //Usunięcie tekstury z pamięci karty graficznej – po głownej pętli
-    glDeleteTextures(1,&tex);
+    glDeleteTextures(1,&texSciana);
+    glDeleteTextures(1,&texPodloga);
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
     exit(EXIT_SUCCESS);
