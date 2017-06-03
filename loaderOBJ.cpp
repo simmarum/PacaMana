@@ -21,7 +21,7 @@ bool loadOBJ( const char * path,
     FILE * file = fopen(path, "r");
     if( file == NULL )
     {
-        printf("Can't read file!\n");
+        printf("Can't read file! %s\n",path);
         return false;
     }
     while( 1 )

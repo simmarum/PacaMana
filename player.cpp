@@ -1,35 +1,35 @@
 #include <stdio.h>
 #include <cstdlib>
 
-#include "wall.h"
+#include "player.h"
 #include "loaderOBJ.h"
 
-#define mWall "modeleBlend/wall.obj"
+#define mPlayer "modeleBlend/pacman.obj"
 
 using namespace glm;
 
-Wall::Wall()
+Player::Player()
 {
-    bool res = loadOBJ(mWall, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
+    bool res = loadOBJ(mPlayer, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
     if(!res)
     {
-        printf("Nie udaÅ‚o siÄ™ wczytaÄ‡!");
+        printf("Nie uda³o siê wczytaæ!");
         exit(1);
     }
     position = vec3(1.0,1.0,1.0);
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
-    speed = 0.0;
+    speed = 2;
 }
 
-Wall::~Wall()
+Player::~Player()
 {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
 }
 
-void Wall::drawSolid(GLuint &tex,mat4 &V)
+void Player::drawSolid(GLuint &tex,mat4 &V)
 {
     glEnable(GL_NORMALIZE);
 
@@ -42,7 +42,6 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     mat4 M=mat4(1.0f);
     M=translate(M,this->position);
     M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
-    M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
