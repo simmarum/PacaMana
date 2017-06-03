@@ -20,8 +20,6 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #ifndef ALL_MODELS_H
 #define ALL_MODELS_H
 
-#include "cube.h"
-#include "teapot.h"
-
+#include "wall.h"
 
 #endif
