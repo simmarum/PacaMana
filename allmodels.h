@@ -21,9 +21,5 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define ALL_MODELS_H
 
 #include "wall.h"
-<<<<<<< HEAD
-
-=======
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 
 #endif

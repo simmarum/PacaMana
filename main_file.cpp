@@ -34,31 +34,16 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "loaderOBJ.h"
 #include <string>
 
-<<<<<<< HEAD
-
-/// Define od tekstur oraz modeli!
-#define tCrate "tekstury/test.png"
-#define mWall "modeleBlend/wall.obj"
-=======
 #define twall "tekstury/test.png"
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 using namespace glm;
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
 float speed_x=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi x
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
-    float camera_x=0;
-    float camera_y=0;
-    float camera_z=0;
 GLuint tex;
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
 
-<<<<<<< HEAD
-Wall * sciana = new Wall();
-
-=======
 Wall *sciana = new Wall();
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 // Read our .obj file
 std::vector< float > TEMPvertices;
 std::vector< float > TEMPuvs;
@@ -70,7 +55,7 @@ void wypiszvector(std::vector <float> name,char c[],int modulo){
     printf("\n%s\n",c);
 for(int i=0;i<name.size();i++){
         if(i%modulo == 0) printf("\n");
-        if(i%(3*modulo)==0) printf("%d\n",i/(3*modulo));
+        if(i%(modulo*modulo)==0) printf("%d\n",i/(modulo*modulo));
     printf("%f\t",name[i]);
 }
 }
@@ -97,12 +82,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (key == GLFW_KEY_RIGHT) speed_y=-PI/2;
         if (key == GLFW_KEY_UP) speed_x=PI/2;
         if (key == GLFW_KEY_DOWN) speed_x=-PI/2;
-        if (key == GLFW_KEY_A) camera_x--;
-        if (key == GLFW_KEY_D) camera_x++;
-        if (key == GLFW_KEY_S) camera_y--;
-        if (key == GLFW_KEY_W) camera_y++;
-        if (key == GLFW_KEY_Q) camera_z--;
-        if (key == GLFW_KEY_E) camera_z++;
     }
 
     if (action == GLFW_RELEASE)
@@ -122,14 +101,11 @@ void initOpenGLProgram(GLFWwindow* window)
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
 
     glClearColor(0,0,0,1); //Ustaw kolor czyszczenia ekranu
-
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
     glEnable(GL_LIGHTING); //Włącz tryb cieniowania
     glEnable(GL_LIGHT0); //Włącz zerowe źródło światła
     glEnable(GL_DEPTH_TEST); //Włącz używanie budora głębokości
-
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
     //glEnable(GL_COLOR_MATERIAL); //Włącz śledzenie kolorów przez materiał
 
     //Wczytanie i import obrazka – w initOpenGLProgram
@@ -137,11 +113,7 @@ void initOpenGLProgram(GLFWwindow* window)
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
     //Wczytaj obrazek
-<<<<<<< HEAD
-    unsigned error = lodepng::decode(image, width, height, tCrate);
-=======
     unsigned error = lodepng::decode(image, width, height, twall);
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
     if(error != 0) {
             printf("%s\n",lodepng_error_text(error));
             exit(1);
@@ -161,26 +133,16 @@ void initOpenGLProgram(GLFWwindow* window)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_NORMALIZE);
 
-<<<<<<< HEAD
-
-
-    bool res = loadOBJ(mWall, TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
-	if(!res) {
-        printf("Nie udało się wczytać!");
-	}
-=======
   //  bool res = loadOBJ("modeleBlend/wall.obj", TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
 	//if(!res) {
   //      printf("Nie udało się wczytać!");
 //	}
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 	printf("koniec\n");
     wypiszvector(TEMPvertices,"verticies",3);
     wypiszvector(TEMPuvs,"uvs",2);
     wypiszvector(TEMPnormals,"normal",3);
 
 }
-
 
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window,float angle_x,float angle_y)
@@ -192,7 +154,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
     //***Przygotowanie do rysowania****
     mat4 P=perspective(50.0f*PI/180.0f,aspect,1.0f,50.0f); //Wylicz macierz rzutowania P
     mat4 V=lookAt( //Wylicz macierz widoku
-               vec3(camera_x,camera_y,camera_z),
+               vec3(0.0f,0.0f,-5.0f),
                vec3(0.0f,0.0f,0.0f),
                vec3(0.0f,1.0f,0.0f));
     glMatrixMode(GL_PROJECTION); //Włącz tryb modyfikacji macierzy rzutowania
@@ -200,18 +162,18 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
     glMatrixMode(GL_MODELVIEW);  //Włącz tryb modyfikacji macierzy model-widok
 
     /// TEST WCZYTYWANIA Z OBJ
+
+
+
     //Rysowanie kostki
-    //1. Wyliczenie i załadowanie macierzy modelu (ściany?)
+    //1. Wyliczenie i załadowanie macierzy modelu
     mat4 M=mat4(1.0f);
     M=rotate(M,angle_x,vec3(1.0f,0.0f,0.0f));
     M=rotate(M,angle_y,vec3(0.0f,1.0f,0.0f));
     glLoadMatrixf(value_ptr(V*M));
 
     sciana->drawSolid(tex);
-<<<<<<< HEAD
-=======
 
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }

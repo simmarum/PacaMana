@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <cstdlib>
-<<<<<<< HEAD
-=======
 
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 #include "wall.h"
 #include "loaderOBJ.h"
 

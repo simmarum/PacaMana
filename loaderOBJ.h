@@ -5,26 +5,34 @@
 #ifndef LOADEROBJ_H_INCLUDED
 #define LOADEROBJ_H_INCLUDED
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <vector>
 /*
-* Funckja do wczytywanie formatu OBJ z blendera do OpenGL'a za pomocƒÖ funckji 'gl_drawArray'.
+* Funckja do wczytywanie formatu OBJ z blendera do OpenGL'a za pomocπ funckji 'gl_drawArray'.
 * (Jeden model na plik!)
-* Wa≈ºne aby przy exporcie w blenderze zaznaczyƒá tylko poni≈ºsze opcje:
+* Waøne aby przy exporcie w blenderze zaznaczyÊ tylko poniøsze opcje:
 *   -Apply Modifiers
 *   -Write Normals
 *   -Include UVs
 *   -Triangulate Faces
 **********************************
 * Parametry funkcji:
-*   - const char * path -> ≈õciezka do pliku
-*   - std::vector < float > & out_vertices -> wektor wierzcho≈Çk√≥w
-*   - std::vector < float > & out_uvs -> wektor wektor√≥w teksturowania
-*   - std::vector < float > & out_normals -> wektor wektor√≥w normalnych
-*   - unsigned int &vCount -> liczba wierzcho≈Çk√≥w
+*   - const char * path -> úciezka do pliku
+*   - std::vector < float > & out_vertices -> wektor wierzcho≥kÛw
+*   - std::vector < float > & out_uvs -> wektor wektorÛw teksturowania
+*   - std::vector < float > & out_normals -> wektor wektorÛw normalnych
+*   - unsigned int &vCount -> liczba wierzcho≥kÛw
 **********************************
-* Do funkcji w OpenGL'u potrzeba wska≈∫nik√≥w na typ float, a vector<float>,
-* mo≈ºna to obej≈õƒá prostƒÖ sztuczkƒÖ (przyk≈Çad):
-* -> &out_vertices[0];
+* Do funkcji w OpenGL'u potrzeba wskaünikÛw na typ float, a vector<float>,
+* moøna to obejúÊ prostπ sztuczkπ (przyk≥ad):
+* -> float* wierzcholki = &out_vertices[0];
 */
 
 bool loadOBJ( const char * path,

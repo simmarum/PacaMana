@@ -3,8 +3,6 @@
 */
 
 #include <string>
-#include <stdio.h>
-#include <string.h>
 #include "loaderOBJ.h"
 
 bool loadOBJ( const char * path,
@@ -84,6 +82,7 @@ bool loadOBJ( const char * path,
         }
     }
     vCount = vertexIndices.size();
+    printf("%u\n",vertexIndices.size()*3);
     for( unsigned int i=0; i<vertexIndices.size(); i++ )
     {
         unsigned int vertexIndex = 3*(vertexIndices[i]-1);
@@ -94,6 +93,7 @@ bool loadOBJ( const char * path,
         vertex = temp_vertices[ vertexIndex+2 ];
         out_vertices.push_back(vertex);
     }
+    printf("%u\n",normalIndices.size());
         for( unsigned int i=0; i<normalIndices.size(); i++ )
     {
         unsigned int normalIndex = 3*(normalIndices[i]-1);
@@ -104,6 +104,7 @@ bool loadOBJ( const char * path,
         normal = temp_normals[ normalIndex+2 ];
         out_normals.push_back(normal);
     }
+    printf("%u\n",normalIndices.size());
         for( unsigned int i=0; i<uvIndices.size(); i++ )
     {
         unsigned int uvIndex = 2*(uvIndices[i]-1);

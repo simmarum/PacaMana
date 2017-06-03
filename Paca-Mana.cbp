@@ -55,16 +55,6 @@
 		<Unit filename="main_file.cpp" />
 		<Unit filename="model.cpp" />
 		<Unit filename="model.h" />
-<<<<<<< HEAD
-		<Unit filename="myCube.h" />
-		<Unit filename="sphere.cpp" />
-		<Unit filename="sphere.h" />
-		<Unit filename="teapot.cpp" />
-		<Unit filename="teapot.h" />
-		<Unit filename="torus.cpp" />
-		<Unit filename="torus.h" />
-=======
->>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 		<Unit filename="wall.cpp" />
 		<Unit filename="wall.h" />
 		<Extensions>
