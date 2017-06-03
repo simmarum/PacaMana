@@ -29,15 +29,19 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <lodepng.h>
 #include "constants.h"
 #include "allmodels.h"
-#include "myCube.h"
+
 
 #include "loaderOBJ.h"
 #include <string>
 
+<<<<<<< HEAD
 
 /// Define od tekstur oraz modeli!
 #define tCrate "tekstury/test.png"
 #define mWall "modeleBlend/wall.obj"
+=======
+#define twall "tekstury/test.png"
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 using namespace glm;
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
@@ -49,8 +53,12 @@ float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wok
 GLuint tex;
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
 
+<<<<<<< HEAD
 Wall * sciana = new Wall();
 
+=======
+Wall *sciana = new Wall();
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 // Read our .obj file
 std::vector< float > TEMPvertices;
 std::vector< float > TEMPuvs;
@@ -129,7 +137,11 @@ void initOpenGLProgram(GLFWwindow* window)
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
     //Wczytaj obrazek
+<<<<<<< HEAD
     unsigned error = lodepng::decode(image, width, height, tCrate);
+=======
+    unsigned error = lodepng::decode(image, width, height, twall);
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
     if(error != 0) {
             printf("%s\n",lodepng_error_text(error));
             exit(1);
@@ -149,12 +161,19 @@ void initOpenGLProgram(GLFWwindow* window)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_NORMALIZE);
 
+<<<<<<< HEAD
 
 
     bool res = loadOBJ(mWall, TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
 	if(!res) {
         printf("Nie udało się wczytać!");
 	}
+=======
+  //  bool res = loadOBJ("modeleBlend/wall.obj", TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
+	//if(!res) {
+  //      printf("Nie udało się wczytać!");
+//	}
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 	printf("koniec\n");
     wypiszvector(TEMPvertices,"verticies",3);
     wypiszvector(TEMPuvs,"uvs",2);
@@ -189,6 +208,10 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
     glLoadMatrixf(value_ptr(V*M));
 
     sciana->drawSolid(tex);
+<<<<<<< HEAD
+=======
+
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }

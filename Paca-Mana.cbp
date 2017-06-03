@@ -48,10 +48,6 @@
 		</Linker>
 		<Unit filename="allmodels.h" />
 		<Unit filename="constants.h" />
-		<Unit filename="cube.cpp" />
-		<Unit filename="cube.h" />
-		<Unit filename="detailed_cube.cpp" />
-		<Unit filename="detailed_cube.h" />
 		<Unit filename="loaderOBJ.cpp" />
 		<Unit filename="loaderOBJ.h" />
 		<Unit filename="lodepng.cpp" />
@@ -59,6 +55,7 @@
 		<Unit filename="main_file.cpp" />
 		<Unit filename="model.cpp" />
 		<Unit filename="model.h" />
+<<<<<<< HEAD
 		<Unit filename="myCube.h" />
 		<Unit filename="sphere.cpp" />
 		<Unit filename="sphere.h" />
@@ -66,6 +63,8 @@
 		<Unit filename="teapot.h" />
 		<Unit filename="torus.cpp" />
 		<Unit filename="torus.h" />
+=======
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 		<Unit filename="wall.cpp" />
 		<Unit filename="wall.h" />
 		<Extensions>

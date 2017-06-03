@@ -21,10 +21,14 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define MODEL_H
 
 #include <vector>
-#include <glm/glm.hpp>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "constants.h"
 
+<<<<<<< HEAD
 	class Model {
 		public:
     std::vector< float > TEMPvertices;
@@ -35,5 +39,18 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 			virtual void drawSolid(GLuint tex)=0;
 			virtual void drawWire(GLuint tex);
 	};
+=======
+class Model
+{
+public:
+    std::vector< float > TEMPvertices;
+    std::vector< float > TEMPuvs;
+    std::vector< float > TEMPnormals;
+    unsigned int TEMPvCount;
+
+    virtual void drawSolid(GLuint tex)=0;
+    virtual void drawWire(GLuint tex);
+};
+>>>>>>> fc5f2f398077480d19bf90e3f8ae0aa20d362309
 
 #endif
