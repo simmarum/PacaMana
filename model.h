@@ -25,20 +25,15 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <GLFW/glfw3.h>
 #include "constants.h"
 
-namespace Models {
-
 	class Model {
 		public:
-			int vertexCount;
-			float *vertices;
-			float *normals;
-			float *vertexNormals;
-			float *texCoords;
-			float *colors;
-					
-			virtual void drawSolid()=0;
-			virtual void drawWire();
+    std::vector< float > TEMPvertices;
+    std::vector< float > TEMPuvs;
+    std::vector< float > TEMPnormals; // Won't be used at the moment.
+    unsigned int TEMPvCount;
+
+			virtual void drawSolid(GLuint tex)=0;
+			virtual void drawWire(GLuint tex);
 	};
-}
 
 #endif

@@ -66,6 +66,8 @@
 		<Unit filename="teapot.h" />
 		<Unit filename="torus.cpp" />
 		<Unit filename="torus.h" />
+		<Unit filename="wall.cpp" />
+		<Unit filename="wall.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

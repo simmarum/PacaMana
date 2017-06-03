@@ -19,12 +19,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #include "model.h"
 
-namespace Models {
-	void Model::drawWire() {
+	void Model::drawWire(GLuint tex) {
 		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-		
-		drawSolid();
-		
+		drawSolid(tex);
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
-}
