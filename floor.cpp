@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cstdlib>
 
+#include "constants.h"
 #include "floor.h"
 #include "loaderOBJ.h"
 
@@ -13,7 +14,7 @@ Floor::Floor()
     bool res = loadOBJ(mFloor, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
     if(!res)
     {
-        printf("Nie uda³o siê wczytaæ!");
+        printf("Nie udaÂ³o siÃª wczytaÃ¦!");
         exit(1);
     }
 }
@@ -31,15 +32,11 @@ Floor::~Floor()
 
 void Floor::drawSolid(GLuint &tex,mat4 &V)
 {
-    vec3 positionTemp;
-    int width = 15;
-    int depth = 15;
-    for(int i=0;i<width;i++){
-        for(int j=0;j<depth;j++){
-            positionTemp.x = (float)i;
-            positionTemp.y = 0.0;
-            positionTemp.z = (float)j;
-            drawElem(tex,V,positionTemp);
+    vec3 tempPosition;
+    for(int i=0;i<WYSOKOSC_MAPY;i++){
+        for(int j=0;j<SZEROKOSC_MAPY;j++){
+                tempPosition = vec3((float)i,0.0,(float)j);
+            drawElem(tex,V,tempPosition);
         }
     }
 }

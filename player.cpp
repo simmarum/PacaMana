@@ -4,11 +4,12 @@
 #include "player.h"
 #include "loaderOBJ.h"
 
+
 #define mPlayer "modeleBlend/pacman.obj"
 
 using namespace glm;
 
-Player::Player()
+Player::Player(Map* &mapa)
 {
     bool res = loadOBJ(mPlayer, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
     if(!res)
@@ -20,6 +21,19 @@ Player::Player()
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
     speed = 2;
+    findPosition(mapa);
+}
+Player::findPosition(Map* &mapa){
+    for(int i=0; i<WYSOKOSC_MAPY; i++)
+    {
+        for(int j=0; j<SZEROKOSC_MAPY; j++)
+        {
+            if(mapa->mapa[i][SZEROKOSC_MAPY-1-j] == 4)
+            {
+                this->position = vec3((float)i,1.0,(float)j);
+            }
+        }
+    }
 }
 
 Player::~Player()

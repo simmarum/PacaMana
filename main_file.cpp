@@ -39,45 +39,42 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define tfloor "tekstury/floor.png"
 #define tplayer "tekstury/pacman.png"
 
-#define kup  GLFW_KEY_W
-#define kdown  GLFW_KEY_S
-#define kleft  GLFW_KEY_A
-#define kright  GLFW_KEY_D
+#define kup  GLFW_KEY_UP
+#define kdown  GLFW_KEY_DOWN
+#define kleft  GLFW_KEY_LEFT
+#define kright  GLFW_KEY_RIGHT
 
-#define up  0
-#define down  1
-#define left  2
-#define right  3
+#define nop 0
+#define up  1
+#define down  2
+#define left  3
+#define right  4
 
 using namespace glm;
 
 
 Wall *sciana = new Wall();
 Floor *podloga = new Floor();
-Player *player = new Player();
 Map *mapa = new Map();
+Player *player = new Player(mapa);
+
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
 float speed_zero= 0.0f;
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
 float camera_speed=0.05;
-float camera_far = 4;
-vec3 camera = vec3(player->position.x-3.6,player->position.y+1.6,player->position.z-3.6);
-vec3 look = vec3(0.0,0.0,0.0);
+float camera_far = 3;
+float camera_angle = 1.0;
+vec3 camera = vec3(player->position.x-camera_far*cos(player->rotation.y),
+                    player->position.y+camera_angle,
+                    player->position.z+camera_far*sin(player->rotation.y));
 
-bool keys[32]= {false};
+bool keys[32];
 
 GLuint texSciana;
 GLuint texPodloga;
 GLuint texPlayer;
 
-
-// Read our .obj file
-std::vector< float > TEMPvertices;
-std::vector< float > TEMPuvs;
-std::vector< float > TEMPnormals; // Won't be used at the moment.
-std::vector< float > TEMPcolor;
-unsigned int TEMPvCount;
 
 void wypiszvector(std::vector <float> name,char c[],int modulo)
 {
@@ -104,34 +101,39 @@ void windowResize(GLFWwindow* window, int width, int height)
 }
 void doMove()
 {
-    if (keys[left]) rotateLEFT(speed_y);
-    if (!keys[left]) rotateSTOP(speed_y);
-    if (keys[right]) rotateRIGHT(speed_y);
-    if (!keys[right]) rotateSTOP(speed_y);
     if (keys[up]) goSRTAIGHT(player);
     if (keys[down]) goBACK(player);
+    if (!keys[right]) rotateSTOP(speed_y);
+    if (!keys[left]) rotateSTOP(speed_y);
+    if (keys[right]) rotateRIGHT(speed_y);
+    if (keys[left]) rotateLEFT(speed_y);
 
-    if (keys[left] && keys[up]){
+    if (keys[left] && keys[up])
+    {
         rotateLEFT(speed_y);
         goSRTAIGHT(player);
     }
-    if (keys[left] && keys[down]){
-        rotateLEFT(speed_y);
+    if (keys[left] && keys[down])
+    {
+        rotateRIGHT(speed_y);
         goBACK(player);
     }
-    if (keys[right] && keys[up]){
+    if (keys[right] && keys[up])
+    {
         rotateRIGHT(speed_y);
         goSRTAIGHT(player);
     }
-    if (keys[right] && keys[down]){
-        rotateRIGHT(speed_y);(speed_y);
+    if (keys[right] && keys[down])
+    {
+        rotateLEFT(speed_y);
         goBACK(player);
     }
 }
 //Procedura obsługi klawiatury
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if(action == GLFW_PRESS){
+    if(action == GLFW_PRESS)
+    {
         if(key == kleft) keys[left]=true;
         if(key == kright) keys[right]=true;
         if(key == kup) keys[up]=true;
@@ -185,7 +187,8 @@ void LetItBeLight()
 
 }
 
-void wczytajObraz(GLuint &tex, std::string path){
+void wczytajObraz(GLuint &tex, std::string path)
+{
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
     unsigned error = lodepng::decode(image, width, height, path);
@@ -224,13 +227,13 @@ void initOpenGLProgram(GLFWwindow* window)
     /// - > Wczytaj obrazek - podloga
     wczytajObraz(texPodloga,tfloor);
 
-   /// - > Wczytaj obrazek - player
+    /// - > Wczytaj obrazek - player
     wczytajObraz(texPlayer,tplayer);
 
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window, float angle_y)
+void drawScene(GLFWwindow* window)
 {
     //************Tutaj umieszczaj kod rysujący obraz******************l
 
@@ -240,7 +243,7 @@ void drawScene(GLFWwindow* window, float angle_y)
     mat4 P=perspective(50.0f*PI/180.0f,aspect,1.0f,50.0f); //Wylicz macierz rzutowania P
     mat4 V=lookAt( //Wylicz macierz widoku
                vec3(player->position.x-camera_far*cos(player->rotation.y),
-                    player->position.y+1.0,
+                    player->position.y+camera_angle,
                     player->position.z+camera_far*sin(player->rotation.y)),
                vec3(player->position.x,player->position.y,player->position.z),
                vec3(0.0f,1.0f,0.0f));
@@ -248,8 +251,10 @@ void drawScene(GLFWwindow* window, float angle_y)
     glLoadMatrixf(value_ptr(P)); //Załaduj macierz rzutowania
     glMatrixMode(GL_MODELVIEW);  //Włącz tryb modyfikacji macierzy model-widok
 
-    player->drawSolid(texPlayer,V);
+
     podloga->drawSolid(texPodloga,V);
+    mapa->drawSolid(texSciana,V);
+    player->drawSolid(texPlayer,V);
 
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
@@ -257,7 +262,9 @@ void drawScene(GLFWwindow* window, float angle_y)
 
 int main(void)
 {
-	mapa->drawMapInConsole();
+    mapa->drawMapInConsole();
+    mapa->testScian();
+
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
@@ -288,8 +295,6 @@ int main(void)
 
     initOpenGLProgram(window); //Operacje inicjujące
 
-
-    float angle_x=0.0f; //Aktualny kąt obrotu obiektu wokół osi x
     glfwSetTime(0); //Wyzeruj timer
 
     //Główna pętla
@@ -298,7 +303,7 @@ int main(void)
         doMove();
         player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
-        drawScene(window,angle_y); //Wykonaj procedurę rysującą
+        drawScene(window); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
     //Usunięcie tekstury z pamięci karty graficznej – po głownej pętli

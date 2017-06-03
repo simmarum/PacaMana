@@ -55,8 +55,14 @@
 		<Unit filename="lodepng.cpp" />
 		<Unit filename="lodepng.h" />
 		<Unit filename="main_file.cpp" />
+		<Unit filename="map.cpp" />
+		<Unit filename="map.h" />
 		<Unit filename="model.cpp" />
 		<Unit filename="model.h" />
+		<Unit filename="move.cpp" />
+		<Unit filename="move.h" />
+		<Unit filename="player.cpp" />
+		<Unit filename="player.h" />
 		<Unit filename="wall.cpp" />
 		<Unit filename="wall.h" />
 		<Extensions>

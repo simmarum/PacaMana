@@ -4,19 +4,50 @@
 #include <iostream>
 #include <cstdlib>
 
+
 #include "map.h"
+#include "wall.h"
 
 using namespace glm;
 
 Map::Map()
 {
-    printf("Konstruktor mapy!");
+    mapaScian.clear();
+    vec3 tempPosition;
+    for(int i=0; i<WYSOKOSC_MAPY; i++)
+    {
+        for(int j=0; j<SZEROKOSC_MAPY; j++)
+        {
+            if(this->mapa[i][SZEROKOSC_MAPY-1-j] == 1)
+            {
+                Wall *wall = new Wall();
+                wall->position = vec3((float)i,1.0,(float)j);
+                mapaScian.push_back(wall);
+            }
+            if(this->mapa[i][SZEROKOSC_MAPY-1-j] == 3)
+            {
+                printf("map - %d,%d\n",i,j);
+                Wall *wall1 = new Wall();
+                wall1->position = vec3((float)i,1.0,(float)j);
+                mapaScian.push_back(wall1);
+                Wall *wall2 = new Wall();
+                wall2->position = vec3((float)i,2.0,(float)j);
+                mapaScian.push_back(wall2);
+                Wall *wall3 = new Wall();
+                wall3->position = vec3((float)i,3.0,(float)j);
+                mapaScian.push_back(wall3);
+            }
+        }
+    }
 }
 
-void Map::drawMapInConsole() {
-    for(int row = 0; row < WYSOKOSC_MAPY; row++) {
+void Map::drawMapInConsole()
+{
+    for(int row = 0; row < WYSOKOSC_MAPY; row++)
+    {
         printf("\n");
-        for(int col = 0; col < SZEROKOSC_MAPY; col++) {
+        for(int col = 0; col < SZEROKOSC_MAPY; col++)
+        {
             printf("%d ", mapa[row][col]);
         }
     }
@@ -27,29 +58,27 @@ Map::~Map()
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
-    position = vec3(0.0,0.0,0.0);
-    rotation = vec3(0.0,0.0,0.0);
-    scale = vec3(1.0,1.0,1.0);
-    speed = 0.0;
 }
 
-void Map::drawSolid(GLuint &tex,mat4 &V)
+void Map::testScian()
 {
-    vec3 positionTemp;
-    int width = 15;
-    int depth = 15;
-    for(int i=0;i<width;i++){
-        for(int j=0;j<depth;j++){
-            positionTemp.x = (float)i;
-            positionTemp.y = 0.0;
-            positionTemp.z = (float)j;
-            drawElem(tex,V,positionTemp);
-        }
+    for(int i; i<mapaScian.size(); i++)
+    {
+        if(mapaScian[i]->position.y == 3)
+            printf("wall - %f,%f,%f\n",mapaScian[i]->position.x,mapaScian[i]->position.y,mapaScian[i]->position.z);
+    }
+}
+void Map::drawSolid(GLuint &texWall,mat4 &V)
+{
+    for(int i; i<mapaScian.size(); i++)
+    {
+        mapaScian[i]->drawSolid(texWall,V);
     }
 }
 
-void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position){
-glEnable(GL_NORMALIZE);
+void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position)
+{
+    glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
