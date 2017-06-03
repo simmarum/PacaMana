@@ -48,7 +48,7 @@ bool loadOBJ( const char * path,
             float uvy;
             fscanf(file, "%f %f\n", &uvx, &uvy );
             temp_uvs.push_back(uvx);
-            temp_uvs.push_back(uvy);
+            temp_uvs.push_back(1-uvy);
         }
         else if ( strcmp( lineHeader, "vn" ) == 0 )
         {

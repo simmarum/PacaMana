@@ -21,24 +21,23 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define MODEL_H
 
 #include <vector>
-#include <glm/glm.hpp>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "constants.h"
 
-namespace Models {
+class Model
+{
+public:
+    std::vector< float > TEMPvertices;
+    std::vector< float > TEMPuvs;
+    std::vector< float > TEMPnormals;
+    unsigned int TEMPvCount;
 
-	class Model {
-		public:
-			int vertexCount;
-			float *vertices;
-			float *normals;
-			float *vertexNormals;
-			float *texCoords;
-			float *colors;
-					
-			virtual void drawSolid()=0;
-			virtual void drawWire();
-	};
-}
+    virtual void drawSolid(GLuint tex)=0;
+    virtual void drawWire(GLuint tex);
+};
 
 #endif

@@ -29,10 +29,12 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <lodepng.h>
 #include "constants.h"
 #include "allmodels.h"
-#include "myCube.h"
+
 
 #include "loaderOBJ.h"
 #include <string>
+
+#define twall "tekstury/test.png"
 using namespace glm;
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
@@ -40,6 +42,8 @@ float speed_x=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wok
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
 GLuint tex;
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+
+Wall *sciana = new Wall();
 // Read our .obj file
 std::vector< float > TEMPvertices;
 std::vector< float > TEMPuvs;
@@ -109,7 +113,7 @@ void initOpenGLProgram(GLFWwindow* window)
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
     //Wczytaj obrazek
-    unsigned error = lodepng::decode(image, width, height, "tekstury/crate.png");
+    unsigned error = lodepng::decode(image, width, height, twall);
     if(error != 0) {
             printf("%s\n",lodepng_error_text(error));
             exit(1);
@@ -129,10 +133,10 @@ void initOpenGLProgram(GLFWwindow* window)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_NORMALIZE);
 
-    bool res = loadOBJ("modeleBlend/wall.obj", TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
-	if(!res) {
-        printf("Nie udało się wczytać!");
-	}
+  //  bool res = loadOBJ("modeleBlend/wall.obj", TEMPvertices, TEMPuvs, TEMPnormals,TEMPvCount);
+	//if(!res) {
+  //      printf("Nie udało się wczytać!");
+//	}
 	printf("koniec\n");
     wypiszvector(TEMPvertices,"verticies",3);
     wypiszvector(TEMPuvs,"uvs",2);
@@ -168,46 +172,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
     M=rotate(M,angle_y,vec3(0.0f,1.0f,0.0f));
     glLoadMatrixf(value_ptr(V*M));
 
-    glBindTexture(GL_TEXTURE_2D,tex);
-
-    //2. Rysowanie modelu
-    float*v = &TEMPvertices[0];
-    float*c = &TEMPcolor[0];
-    float*u = &TEMPuvs[0];
-    float*n = &TEMPnormals[0];
-
-    glEnable(GL_NORMALIZE);
-    glEnableClientState(GL_VERTEX_ARRAY); //Podczas rysowania używaj tablicy wierzchołków
-   // glEnableClientState(GL_COLOR_ARRAY); //Podczas rysowania używaj tablicy kolorów
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState( GL_NORMAL_ARRAY );
-    glVertexPointer(3,GL_FLOAT,0,v); //Ustaw tablicę myCubeVertices jako tablicę wierzchołków
-   // glColorPointer(3,GL_FLOAT,0,c); //Ustaw tablicę myCubeColors jako tablicę kolorów
-    glTexCoordPointer( 2, GL_FLOAT, 0, u);
-    glNormalPointer( GL_FLOAT, sizeof(float)*3, n);
-
-    // ustawianie parametru materialu
-    float ambient[] = {0,0,0,1};
-    float emision[] = {0,0,0,1};
-    float diffuse[] = {0.7,0.5,0.5,1};
-    float specular[] = {0.5,0.5,0.5,1};
-    float shininess = 50;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-
-    //glBufferData(GL_ARRAY_BUFFER, TEMPvertices.size() * sizeof(glm::vec3), &TEMPvertices[0], GL_STATIC_DRAW);
-    glDrawArrays(GL_TRIANGLES,0,TEMPvCount); //Rysuj model
-
-    //Posprzątaj po sobie
-    glDisableClientState(GL_VERTEX_ARRAY);
-    //glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState( GL_NORMAL_ARRAY );
-
-   // Models::detailedCube.drawSolid();
+    sciana->drawSolid(tex);
 
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
