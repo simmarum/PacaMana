@@ -1,37 +1,55 @@
+
+#include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 #include <cstdlib>
 
-#include "wall.h"
-#include "loaderOBJ.h"
-
-#define mWall "modeleBlend/wall.obj"
+#include "map.h"
 
 using namespace glm;
 
-Wall::Wall()
+Map::Map()
 {
-    bool res = loadOBJ(mWall, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
-    if(!res)
-    {
-        printf("Nie udało się wczytać!");
-        exit(1);
+    printf("Konstruktor mapy!");
+}
+
+void Map::drawMapInConsole() {
+    for(int row = 0; row < WYSOKOSC_MAPY; row++) {
+        printf("\n");
+        for(int col = 0; col < SZEROKOSC_MAPY; col++) {
+            printf("%d ", mapa[row][col]);
+        }
     }
-    position = vec3(1.0,1.0,1.0);
+}
+
+Map::~Map()
+{
+    TEMPvertices.clear();
+    TEMPuvs.clear();
+    TEMPnormals.clear();
+    position = vec3(0.0,0.0,0.0);
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
     speed = 0.0;
 }
 
-Wall::~Wall()
+void Map::drawSolid(GLuint &tex,mat4 &V)
 {
-    TEMPvertices.clear();
-    TEMPuvs.clear();
-    TEMPnormals.clear();
+    vec3 positionTemp;
+    int width = 15;
+    int depth = 15;
+    for(int i=0;i<width;i++){
+        for(int j=0;j<depth;j++){
+            positionTemp.x = (float)i;
+            positionTemp.y = 0.0;
+            positionTemp.z = (float)j;
+            drawElem(tex,V,positionTemp);
+        }
+    }
 }
 
-void Wall::drawSolid(GLuint &tex,mat4 &V)
-{
-    glEnable(GL_NORMALIZE);
+void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position){
+glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
@@ -40,9 +58,7 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glBindTexture(GL_TEXTURE_2D,tex);
 
     mat4 M=mat4(1.0f);
-    M=translate(M,this->position);
-    M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
-    M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
+    M=translate(M,position);
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
@@ -66,3 +82,5 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+
+

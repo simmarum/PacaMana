@@ -55,6 +55,7 @@ using namespace glm;
 Wall *sciana = new Wall();
 Floor *podloga = new Floor();
 Player *player = new Player();
+Map *mapa = new Map();
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
 float speed_zero= 0.0f;
@@ -256,6 +257,7 @@ void drawScene(GLFWwindow* window, float angle_y)
 
 int main(void)
 {
+	mapa->drawMapInConsole();
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
@@ -288,7 +290,6 @@ int main(void)
 
 
     float angle_x=0.0f; //Aktualny kąt obrotu obiektu wokół osi x
-    float angle_y=0.0f; //Aktualny kąt obrotu obiektu wokół osi y
     glfwSetTime(0); //Wyzeruj timer
 
     //Główna pętla
