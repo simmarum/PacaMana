@@ -1,37 +1,51 @@
 #include <stdio.h>
 #include <cstdlib>
 
-#include "wall.h"
+#include "floor.h"
 #include "loaderOBJ.h"
 
-#define mWall "modeleBlend/wall.obj"
+#define mFloor "modeleBlend/floor.obj"
 
 using namespace glm;
 
-Wall::Wall()
+Floor::Floor()
 {
-    bool res = loadOBJ(mWall, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
+    bool res = loadOBJ(mFloor, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
     if(!res)
     {
-        printf("Nie udaÅ‚o siÄ™ wczytaÄ‡!");
+        printf("Nie uda³o siê wczytaæ!");
         exit(1);
     }
-    position = vec3(1.0,1.0,1.0);
-    rotation = vec3(0.0,0.0,0.0);
-    scale = vec3(1.0,1.0,1.0);
-    speed = 0.05;
 }
 
-Wall::~Wall()
+Floor::~Floor()
 {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
+    position = vec3(0.0,0.0,0.0);
+    rotation = vec3(0.0,0.0,0.0);
+    scale = vec3(1.0,1.0,1.0);
+    speed = 0.0;
 }
 
-void Wall::drawSolid(GLuint &tex,mat4 &V)
+void Floor::drawSolid(GLuint &tex,mat4 &V)
 {
-    glEnable(GL_NORMALIZE);
+    vec3 positionTemp;
+    int width = 15;
+    int depth = 15;
+    for(int i=0;i<width;i++){
+        for(int j=0;j<depth;j++){
+            positionTemp.x = (float)i;
+            positionTemp.y = 0.0;
+            positionTemp.z = (float)j;
+            drawElem(tex,V,positionTemp);
+        }
+    }
+}
+
+void Floor::drawElem(GLuint &tex,mat4 &V,vec3 &position){
+glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
@@ -40,9 +54,7 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glBindTexture(GL_TEXTURE_2D,tex);
 
     mat4 M=mat4(1.0f);
-    M=translate(M,this->position);
-    M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
-    M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
+    M=translate(M,position);
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
@@ -66,4 +78,5 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+
 

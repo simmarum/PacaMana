@@ -8,7 +8,7 @@ class Wall: public Model
 public:
     Wall();
     ~Wall();
-    void drawSolid(GLuint tex);
+    void drawSolid(GLuint &tex,mat4 &V);
 };
 
 

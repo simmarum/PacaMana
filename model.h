@@ -28,6 +28,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include "constants.h"
 
+using namespace glm;
+
 class Model
 {
 public:
@@ -35,9 +37,13 @@ public:
     std::vector< float > TEMPuvs;
     std::vector< float > TEMPnormals;
     unsigned int TEMPvCount;
+    vec3 position;
+    vec3 rotation;
+    vec3 scale;
+    float speed;
 
-    virtual void drawSolid(GLuint tex)=0;
-    virtual void drawWire(GLuint tex);
+    virtual void drawSolid(GLuint &tex,mat4 &V)=0;
+    virtual void drawWire(GLuint &tex,mat4 &V);
 };
 
 #endif
