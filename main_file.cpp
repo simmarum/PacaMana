@@ -259,7 +259,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
 
 int main(void)
 {
-    mapa->drawMapInConsole();
+    mapa->drawMapInConsole(true);
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów

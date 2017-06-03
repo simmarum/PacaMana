@@ -13,11 +13,32 @@ Map::Map()
     printf("Konstruktor mapy!");
 }
 
-void Map::drawMapInConsole() {
+void Map::drawMapInConsole(bool simple) {
     for(int row = 0; row < WYSOKOSC_MAPY; row++) {
         printf("\n");
         for(int col = 0; col < SZEROKOSC_MAPY; col++) {
-            printf("%d ", mapa[row][col]);
+            if(simple) {
+                switch(mapa[row][col]) {
+                case 4: {
+                    printf(" X ");
+                    break;
+                } case 2: {
+                    printf(" B ");
+                    break;
+                } case 1: {
+                    printf(" # ");
+                    break;
+                } case 3: {
+                    printf(" # ");
+                    break;
+                } default: {
+                    printf("   ");
+                    break;
+                }
+                }
+            } else {
+                printf(" %d ", mapa[row][col]);
+            }
         }
     }
 }

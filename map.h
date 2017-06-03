@@ -9,7 +9,7 @@ class Map : public Model {
          Map();
         ~Map();
         void drawSolid(GLuint &tex,mat4 &V);
-        void drawMapInConsole();
+        void drawMapInConsole(bool simple);
     private:
         void drawElem(GLuint &tex,mat4 &V,vec3 &position);
         int mapa[WYSOKOSC_MAPY][SZEROKOSC_MAPY] = {
