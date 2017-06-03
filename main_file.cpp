@@ -42,6 +42,7 @@ using namespace glm;
 
 Wall *sciana = new Wall();
 Floor *podloga = new Floor();
+Map *mapa = new Map();
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
 float speed_x=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi x
@@ -173,6 +174,7 @@ void LetItBeLight()
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window)
 {
+
     //************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
     glfwSetFramebufferSizeCallback(window, windowResize); //Zarejestruj procedurę obsługi zmiany rozdzielczości bufora ramki
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
@@ -257,6 +259,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
 
 int main(void)
 {
+    mapa->drawMapInConsole();
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
