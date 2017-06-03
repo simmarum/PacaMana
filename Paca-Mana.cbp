@@ -48,6 +48,8 @@
 		</Linker>
 		<Unit filename="allmodels.h" />
 		<Unit filename="constants.h" />
+		<Unit filename="floor.cpp" />
+		<Unit filename="floor.h" />
 		<Unit filename="loaderOBJ.cpp" />
 		<Unit filename="loaderOBJ.h" />
 		<Unit filename="lodepng.cpp" />

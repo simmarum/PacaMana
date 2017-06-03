@@ -27,34 +27,49 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <stdlib.h>
 #include <stdio.h>
 #include <lodepng.h>
+#include <string>
 #include "constants.h"
 #include "allmodels.h"
 
-
+#include "move.h"
 #include "loaderOBJ.h"
 #include <string>
 
-#define twall "tekstury/test.png"
+#define twall "tekstury/crate.png"
 #define tfloor "tekstury/floor.png"
+#define tplayer "tekstury/pacman.png"
+
+#define kup  GLFW_KEY_W
+#define kdown  GLFW_KEY_S
+#define kleft  GLFW_KEY_A
+#define kright  GLFW_KEY_D
+
+#define up  0
+#define down  1
+#define left  2
+#define right  3
 
 using namespace glm;
 
 
 Wall *sciana = new Wall();
 Floor *podloga = new Floor();
+Player *player = new Player();
 Map *mapa = new Map();
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
-float speed_x=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi x
+float speed_zero= 0.0f;
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
 float camera_speed=0.05;
 float camera_far = 4;
-vec3 camera = vec3(sciana->position.x-3.6,sciana->position.y+1.6,sciana->position.z-3.6);
+vec3 camera = vec3(player->position.x-3.6,player->position.y+1.6,player->position.z-3.6);
 vec3 look = vec3(0.0,0.0,0.0);
+
+bool keys[32]= {false};
 
 GLuint texSciana;
 GLuint texPodloga;
-
+GLuint texPlayer;
 
 
 // Read our .obj file
@@ -87,52 +102,50 @@ void windowResize(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
     aspect=(float)width/(float)height; //Stosunek szerokości do wysokości okna
 }
+void doMove()
+{
+    if (keys[left]) rotateLEFT(speed_y);
+    if (!keys[left]) rotateSTOP(speed_y);
+    if (keys[right]) rotateRIGHT(speed_y);
+    if (!keys[right]) rotateSTOP(speed_y);
+    if (keys[up]) goSRTAIGHT(player);
+    if (keys[down]) goBACK(player);
 
+    if (keys[left] && keys[up]){
+        rotateLEFT(speed_y);
+        goSRTAIGHT(player);
+    }
+    if (keys[left] && keys[down]){
+        rotateLEFT(speed_y);
+        goBACK(player);
+    }
+    if (keys[right] && keys[up]){
+        rotateRIGHT(speed_y);
+        goSRTAIGHT(player);
+    }
+    if (keys[right] && keys[down]){
+        rotateRIGHT(speed_y);(speed_y);
+        goBACK(player);
+    }
+}
 //Procedura obsługi klawiatury
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (action == GLFW_PRESS)
-    {
-        if (key == GLFW_KEY_LEFT) speed_y=PI/2;
-        if (key == GLFW_KEY_RIGHT) speed_y=-PI/2;
-        if (key == GLFW_KEY_UP) speed_x=PI/2;
-        if (key == GLFW_KEY_DOWN) speed_x=-PI/2;
-
-        if (key == GLFW_KEY_W)
-        {
-            sciana->position.x += cos(sciana->rotation.y)*sciana->speed;
-            sciana->position.z -= sin(sciana->rotation.y)*sciana->speed;
-        }
-        if (key == GLFW_KEY_S)
-        {
-            sciana->position.x -= cos(sciana->rotation.y)*sciana->speed;
-            sciana->position.z += sin(sciana->rotation.y)*sciana->speed;
-        }
-    }
-    if (action == GLFW_REPEAT )
-    {
-        if (key == GLFW_KEY_W)
-        {
-            sciana->position.x += cos(sciana->rotation.y)*sciana->speed;
-            sciana->position.z -= sin(sciana->rotation.y)*sciana->speed;
-        }
-        if (key == GLFW_KEY_S)
-        {
-
-            sciana->position.x -= cos(sciana->rotation.y)*sciana->speed;
-            sciana->position.z += sin(sciana->rotation.y)*sciana->speed;
-
-        }
+    if(action == GLFW_PRESS){
+        if(key == kleft) keys[left]=true;
+        if(key == kright) keys[right]=true;
+        if(key == kup) keys[up]=true;
+        if(key == kdown) keys[down]=true;
     }
     printf("CAMERA: X=%f Y=%f Z=%f\n",camera.x,camera.y,camera.z);
-    printf("Sciana: X=%f Y=%f Z=%f\n",sciana->position.x,sciana->position.y,sciana->position.z);
+    printf("player: X=%f Y=%f Z=%f\n",player->position.x,player->position.y,player->position.z);
 
     if (action == GLFW_RELEASE)
     {
-        if (key == GLFW_KEY_LEFT) speed_y=0;
-        if (key == GLFW_KEY_RIGHT) speed_y=0;
-        if (key == GLFW_KEY_UP) speed_x=0;
-        if (key == GLFW_KEY_DOWN) speed_x=0;
+        if(key == kleft) keys[left]=false;
+        if(key == kright) keys[right]=false;
+        if(key == kup) keys[up]=false;
+        if(key == kdown) keys[down]=false;
     }
 }
 void LetItBeLight()
@@ -171,10 +184,32 @@ void LetItBeLight()
     glLightfv(GL_LIGHT3, GL_POSITION, position3);
 
 }
+
+void wczytajObraz(GLuint &tex, std::string path){
+    std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
+    unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
+    unsigned error = lodepng::decode(image, width, height, path);
+    if(error != 0)
+    {
+        printf("%s\n",lodepng_error_text(error));
+        exit(1);
+    }
+    //Import do pamięci karty graficznej
+    glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
+    glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+    //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+    //Bilinear filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_NORMALIZE);
+}
+
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window)
 {
-
     //************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
     glfwSetFramebufferSizeCallback(window, windowResize); //Zarejestruj procedurę obsługi zmiany rozdzielczości bufora ramki
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
@@ -183,56 +218,19 @@ void initOpenGLProgram(GLFWwindow* window)
 
     glEnable(GL_DEPTH_TEST); //Włącz używanie budora głębokości
 
-    ///Wczytanie i import obrazka – w initOpenGLProgram
-    std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
-    unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
-
     /// - > Wczytaj obrazek - sciana
-    image.clear();
-    unsigned error = lodepng::decode(image, width, height, twall);
-    if(error != 0)
-    {
-        printf("%s\n",lodepng_error_text(error));
-        exit(1);
-    }
-    //Import do pamięci karty graficznej
-    glGenTextures(1,&texSciana); //Zainicjuj jeden uchwyt
-    glBindTexture(GL_TEXTURE_2D, texSciana); //Uaktywnij uchwyt
-    //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
-    //Bilinear filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_NORMALIZE);
+    wczytajObraz(texSciana,twall);
 
     /// - > Wczytaj obrazek - podloga
-    image.clear();
-    error = lodepng::decode(image, width, height, tfloor);
-    if(error != 0)
-    {
-        printf("%s\n",lodepng_error_text(error));
-        exit(1);
-    }
-    //Import do pamięci karty graficznej
-    glGenTextures(1,&texPodloga); //Zainicjuj jeden uchwyt
-    glBindTexture(GL_TEXTURE_2D, texPodloga); //Uaktywnij uchwyt
-    //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
-    //Bilinear filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_NORMALIZE);
+    wczytajObraz(texPodloga,tfloor);
 
-
+   /// - > Wczytaj obrazek - player
+    wczytajObraz(texPlayer,tplayer);
 
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float angle_x,float angle_y)
+void drawScene(GLFWwindow* window, float angle_y)
 {
     //************Tutaj umieszczaj kod rysujący obraz******************l
 
@@ -241,16 +239,16 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
     //***Przygotowanie do rysowania****
     mat4 P=perspective(50.0f*PI/180.0f,aspect,1.0f,50.0f); //Wylicz macierz rzutowania P
     mat4 V=lookAt( //Wylicz macierz widoku
-               vec3(sciana->position.x-camera_far*cos(sciana->rotation.y),
-                    sciana->position.y+1.0,
-                    sciana->position.z+camera_far*sin(sciana->rotation.y)),
-               vec3(sciana->position.x,sciana->position.y,sciana->position.z),
+               vec3(player->position.x-camera_far*cos(player->rotation.y),
+                    player->position.y+1.0,
+                    player->position.z+camera_far*sin(player->rotation.y)),
+               vec3(player->position.x,player->position.y,player->position.z),
                vec3(0.0f,1.0f,0.0f));
     glMatrixMode(GL_PROJECTION); //Włącz tryb modyfikacji macierzy rzutowania
     glLoadMatrixf(value_ptr(P)); //Załaduj macierz rzutowania
     glMatrixMode(GL_MODELVIEW);  //Włącz tryb modyfikacji macierzy model-widok
 
-    sciana->drawSolid(texSciana,V);
+    player->drawSolid(texPlayer,V);
     podloga->drawSolid(texPodloga,V);
 
 
@@ -259,7 +257,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y)
 
 int main(void)
 {
-    mapa->drawMapInConsole();
+	mapa->drawMapInConsole();
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
@@ -292,16 +290,15 @@ int main(void)
 
 
     float angle_x=0.0f; //Aktualny kąt obrotu obiektu wokół osi x
-    float angle_y=0.0f; //Aktualny kąt obrotu obiektu wokół osi y
     glfwSetTime(0); //Wyzeruj timer
 
     //Główna pętla
     while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
     {
-        sciana->rotation.x+=speed_x*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
-        sciana->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
+        doMove();
+        player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
-        drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
+        drawScene(window,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
     //Usunięcie tekstury z pamięci karty graficznej – po głownej pętli

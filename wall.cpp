@@ -19,7 +19,7 @@ Wall::Wall()
     position = vec3(1.0,1.0,1.0);
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
-    speed = 0.05;
+    speed = 0.0;
 }
 
 Wall::~Wall()
@@ -66,4 +66,3 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
-
