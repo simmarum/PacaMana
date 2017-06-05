@@ -12,21 +12,27 @@ using namespace glm;
 
 Map::Map()
 {
+    for(int i=0; i<WYSOKOSC_MAPY; i++)
+    {
+        for(int j=0; j<SZEROKOSC_MAPY; j++)
+        {
+            mapa[i][j]=mapaOriginal[i][j];
+        }
+    }
     mapaScian.clear();
     vec3 tempPosition;
     for(int i=0; i<WYSOKOSC_MAPY; i++)
     {
         for(int j=0; j<SZEROKOSC_MAPY; j++)
         {
-            if(this->mapa[i][SZEROKOSC_MAPY-1-j] == 1)
+            if(this->mapa[i][j] == 1)
             {
                 Wall *wall = new Wall();
                 wall->position = vec3((float)i,1.0,(float)j);
                 mapaScian.push_back(wall);
             }
-            if(this->mapa[i][SZEROKOSC_MAPY-1-j] == 3)
+            if(this->mapa[i][j] == 3)
             {
-                printf("map - %d,%d\n",i,j);
                 Wall *wall1 = new Wall();
                 wall1->position = vec3((float)i,1.0,(float)j);
                 mapaScian.push_back(wall1);
@@ -60,17 +66,10 @@ Map::~Map()
     TEMPnormals.clear();
 }
 
-void Map::testScian()
-{
-    for(int i; i<mapaScian.size(); i++)
-    {
-        if(mapaScian[i]->position.y == 3)
-            printf("wall - %f,%f,%f\n",mapaScian[i]->position.x,mapaScian[i]->position.y,mapaScian[i]->position.z);
-    }
-}
 void Map::drawSolid(GLuint &texWall,mat4 &V)
 {
-    for(int i; i<mapaScian.size(); i++)
+
+    for(int i=0; i<mapaScian.size(); i++)
     {
         mapaScian[i]->drawSolid(texWall,V);
     }

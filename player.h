@@ -10,8 +10,10 @@ public:
     Player(Map* &mapa);
     ~Player();
     void drawSolid(GLuint &tex,mat4 &V);
+    void colisionDetect(Map* &mapa);
 private:
-    findPosition(Map* &mapa);
+    void findPosition(Map* &mapa);
+
 };
 
 #endif // PLAYER_H_INCLUDED

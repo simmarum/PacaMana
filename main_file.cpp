@@ -35,6 +35,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "loaderOBJ.h"
 #include <string>
 
+#define szerokoscOkna 500
+#define wysokoscOkna 500
 #define twall "tekstury/crate.png"
 #define tfloor "tekstury/floor.png"
 #define tplayer "tekstury/pacman.png"
@@ -63,8 +65,8 @@ float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
 float speed_zero= 0.0f;
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
 float camera_speed=0.05;
-float camera_far = 3;
-float camera_angle = 1.0;
+float camera_far = 1.3;
+float camera_angle = 0.4;
 vec3 camera = vec3(player->position.x-camera_far*cos(player->rotation.y),
                     player->position.y+camera_angle,
                     player->position.z+camera_far*sin(player->rotation.y));
@@ -97,7 +99,7 @@ void error_callback(int error, const char* description)
 void windowResize(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
-    aspect=(float)width/(float)height; //Stosunek szerokości do wysokości okna
+    aspect=(float)szerokoscOkna/(float)wysokoscOkna; //Stosunek szerokości do wysokości okna
 }
 void doMove()
 {
@@ -240,12 +242,14 @@ void drawScene(GLFWwindow* window)
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wyczyść bufor kolorów (czyli przygotuj "płótno" do rysowania)
 
     //***Przygotowanie do rysowania****
-    mat4 P=perspective(50.0f*PI/180.0f,aspect,1.0f,50.0f); //Wylicz macierz rzutowania P
+    mat4 P=perspective(35.0f*PI/180.0f,aspect,1.0f,30.0f); //Wylicz macierz rzutowania P
     mat4 V=lookAt( //Wylicz macierz widoku
                vec3(player->position.x-camera_far*cos(player->rotation.y),
                     player->position.y+camera_angle,
                     player->position.z+camera_far*sin(player->rotation.y)),
-               vec3(player->position.x,player->position.y,player->position.z),
+               vec3(player->position.x+camera_far*cos(player->rotation.y),
+                    player->position.y+0.3,
+                    player->position.z-camera_far*sin(player->rotation.y)),
                vec3(0.0f,1.0f,0.0f));
     glMatrixMode(GL_PROJECTION); //Włącz tryb modyfikacji macierzy rzutowania
     glLoadMatrixf(value_ptr(P)); //Załaduj macierz rzutowania
@@ -263,7 +267,6 @@ void drawScene(GLFWwindow* window)
 int main(void)
 {
     mapa->drawMapInConsole();
-    mapa->testScian();
 
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
@@ -275,7 +278,7 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
-    window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+    window = glfwCreateWindow(szerokoscOkna, wysokoscOkna, "Paca-Mana", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
     if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
     {
@@ -301,6 +304,7 @@ int main(void)
     while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
     {
         doMove();
+        player->colisionDetect(mapa);
         player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
         drawScene(window); //Wykonaj procedurę rysującą

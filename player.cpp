@@ -23,18 +23,6 @@ Player::Player(Map* &mapa)
     speed = 2;
     findPosition(mapa);
 }
-Player::findPosition(Map* &mapa){
-    for(int i=0; i<WYSOKOSC_MAPY; i++)
-    {
-        for(int j=0; j<SZEROKOSC_MAPY; j++)
-        {
-            if(mapa->mapa[i][SZEROKOSC_MAPY-1-j] == 4)
-            {
-                this->position = vec3((float)i,1.0,(float)j);
-            }
-        }
-    }
-}
 
 Player::~Player()
 {
@@ -42,6 +30,21 @@ Player::~Player()
     TEMPuvs.clear();
     TEMPnormals.clear();
 }
+
+void Player::findPosition(Map* &mapa)
+{
+    for(int i=0; i<WYSOKOSC_MAPY; i++)
+    {
+        for(int j=0; j<SZEROKOSC_MAPY; j++)
+        {
+            if(mapa->mapa[i][j] == 4)
+            {
+                this->position = vec3((float)i,0.75,(float)j);
+            }
+        }
+    }
+}
+
 
 void Player::drawSolid(GLuint &tex,mat4 &V)
 {
@@ -78,5 +81,45 @@ void Player::drawSolid(GLuint &tex,mat4 &V)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void Player::colisionDetect(Map* &mapa)
+{
+    int px = (int)this->position.x;
+    int pz = (int)this->position.z;
+printf("Kolizja: x: %d oraz z: %d\n",px,pz);
+    if(mapa->mapa[px+1][pz]==3 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz>=0 && pz <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 1\n");
+    }
+    if(mapa->mapa[px+1][pz+1]==3 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 2\n");
+    }
+    if(mapa->mapa[px][pz+1]==3 && px>=0 && px<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 3\n");
+    }
+    if(mapa->mapa[px-1][pz+1]==3 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 4\n");
+    }
+    if(mapa->mapa[px-1][pz]==3 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz>=0 && pz <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 5\n");
+    }
+    if(mapa->mapa[px-1][pz-1]==3 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 6\n");
+    }
+    if(mapa->mapa[px][pz-1]==3 && px>=0 && px<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 7\n");
+    }
+    if(mapa->mapa[px+1][pz-1]==3 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY)
+    {
+        printf("Sciana 8\n");
+    }
+
 }
 
