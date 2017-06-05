@@ -14,24 +14,29 @@
 #include <stdio.h>
 
 #include <vector>
+#include "struct_cosilion.h"
 /*
-* Funckja do wczytywanie formatu OBJ z blendera do OpenGL'a za pomoc¹ funckji 'gl_drawArray'.
+* Funckja do wczytywanie formatu OBJ z blendera do OpenGL'a za pomocÂ¹ funckji 'gl_drawArray'.
 * (Jeden model na plik!)
-* Wa¿ne aby przy exporcie w blenderze zaznaczyæ tylko poni¿sze opcje:
+* WaÂ¿ne aby przy exporcie w blenderze zaznaczyÃ¦ tylko poniÂ¿sze opcje:
 *   -Apply Modifiers
 *   -Write Normals
 *   -Include UVs
 *   -Triangulate Faces
 **********************************
 * Parametry funkcji:
-*   - const char * path -> œciezka do pliku
-*   - std::vector < float > & out_vertices -> wektor wierzcho³ków
-*   - std::vector < float > & out_uvs -> wektor wektorów teksturowania
-*   - std::vector < float > & out_normals -> wektor wektorów normalnych
-*   - unsigned int &vCount -> liczba wierzcho³ków
+*   - const char * path -> Å“ciezka do pliku
+*   - std::vector < float > & out_vertices -> wektor wierzchoÂ³kÃ³w
+*   - std::vector < float > & out_uvs -> wektor wektorÃ³w teksturowania
+*   - std::vector < float > & out_normals -> wektor wektorÃ³w normalnych
+*   - unsigned int &vCount -> liczba wierzchoÂ³kÃ³w
+*   - colision_length &colision_length -> struktura zawierajÄ…ca wymiary do wspomagania wykrywania kolizji
+*                       *> float toX -> wymiar na osi X (maxX - minX)/2
+*                       *> float toZ -> wymiar na osi Z (maxZ - minZ)/2
+*                       *> float radius -> wymiar po przekÄ…tnej (promien kola)
 **********************************
-* Do funkcji w OpenGL'u potrzeba wskaŸników na typ float, a vector<float>,
-* mo¿na to obejœæ prost¹ sztuczk¹ (przyk³ad):
+* Do funkcji w OpenGL'u potrzeba wskaÅ¸nikÃ³w na typ float, a vector<float>,
+* moÂ¿na to obejÅ“Ã¦ prostÂ¹ sztuczkÂ¹ (przykÂ³ad):
 * -> float* wierzcholki = &out_vertices[0];
 */
 
@@ -39,7 +44,9 @@ bool loadOBJ( const char * path,
               std::vector < float > & out_vertices,
               std::vector < float > & out_uvs,
               std::vector < float > & out_normals,
-              unsigned int &vCount
+              unsigned int &vCount,
+              colision_length &colision_length
             );
+void wypiszvector(std::vector <float> name,char c[],int modulo);
 
 #endif // LOADEROBJ_H_INCLUDED

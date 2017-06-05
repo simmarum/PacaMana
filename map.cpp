@@ -10,73 +10,48 @@
 
 using namespace glm;
 
-Map::Map()
-{
-    for(int i=0; i<WYSOKOSC_MAPY; i++)
-    {
-        for(int j=0; j<SZEROKOSC_MAPY; j++)
-        {
+Map::Map(colision_length &colision_length) {
+    for(int i=0; i<WYSOKOSC_MAPY; i++) {
+        for(int j=0; j<SZEROKOSC_MAPY; j++) {
             mapa[i][j]=mapaOriginal[i][j];
         }
     }
     mapaScian.clear();
-    vec3 tempPosition;
-    for(int i=0; i<WYSOKOSC_MAPY; i++)
-    {
-        for(int j=0; j<SZEROKOSC_MAPY; j++)
-        {
-            if(this->mapa[i][j] == 1)
-            {
-                Wall *wall = new Wall();
-                wall->position = vec3((float)i,1.0,(float)j);
-                mapaScian.push_back(wall);
-            }
-            if(this->mapa[i][j] == 3)
-            {
-                Wall *wall1 = new Wall();
-                wall1->position = vec3((float)i,1.0,(float)j);
-                mapaScian.push_back(wall1);
-                Wall *wall2 = new Wall();
-                wall2->position = vec3((float)i,2.0,(float)j);
-                mapaScian.push_back(wall2);
-                Wall *wall3 = new Wall();
-                wall3->position = vec3((float)i,3.0,(float)j);
-                mapaScian.push_back(wall3);
-            }
-        }
-    }
+    wall = new Wall(colision_length);
+
 }
 
-void Map::drawMapInConsole()
-{
-    for(int row = 0; row < WYSOKOSC_MAPY; row++)
-    {
+void Map::drawMapInConsole() {
+    for(int row = 0; row < WYSOKOSC_MAPY; row++) {
         printf("\n");
-        for(int col = 0; col < SZEROKOSC_MAPY; col++)
-        {
+        for(int col = 0; col < SZEROKOSC_MAPY; col++) {
             printf("%d ", mapa[row][col]);
         }
     }
 }
 
-Map::~Map()
-{
+Map::~Map() {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
 }
 
-void Map::drawSolid(GLuint &texWall,mat4 &V)
-{
-
-    for(int i=0; i<mapaScian.size(); i++)
-    {
-        mapaScian[i]->drawSolid(texWall,V);
+void Map::drawSolid(GLuint &texWall,mat4 &V) {
+    for(int i=0; i<WYSOKOSC_MAPY; i++) {
+        for(int j=0; j<SZEROKOSC_MAPY; j++) {
+            if(this->mapa[i][j] == 1) {
+                wall->position = vec3((float)i,1.0,(float)j);
+                wall->drawSolid(texWall,V);
+                if(i==0 || j==0 || i==WYSOKOSC_MAPY-1 || j==SZEROKOSC_MAPY-1) {
+                    wall->position = vec3((float)i,2.0,(float)j);
+                    wall->drawSolid(texWall,V);
+                }
+            }
+        }
     }
 }
 
-void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position)
-{
+void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
     glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);

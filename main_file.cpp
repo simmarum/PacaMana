@@ -29,6 +29,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <lodepng.h>
 #include <string>
 #include "constants.h"
+#include "struct_cosilion.h"
 #include "allmodels.h"
 
 #include "move.h"
@@ -54,11 +55,11 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 using namespace glm;
 
+colision_length colision_table[MAX_MODEL_ON_MAP];
 
-Wall *sciana = new Wall();
-Floor *podloga = new Floor();
-Map *mapa = new Map();
-Player *player = new Player(mapa);
+Floor *podloga = new Floor(colision_table[0]);
+Map *mapa = new Map(colision_table[1]);
+Player *player = new Player(mapa,colision_table[2]);
 
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
@@ -68,8 +69,8 @@ float camera_speed=0.05;
 float camera_far = 1.3;
 float camera_angle = 0.4;
 vec3 camera = vec3(player->position.x-camera_far*cos(player->rotation.y),
-                    player->position.y+camera_angle,
-                    player->position.z+camera_far*sin(player->rotation.y));
+                   player->position.y+camera_angle,
+                   player->position.z+camera_far*sin(player->rotation.y));
 
 bool keys[32];
 
@@ -78,31 +79,19 @@ GLuint texPodloga;
 GLuint texPlayer;
 
 
-void wypiszvector(std::vector <float> name,char c[],int modulo)
-{
-    printf("\n%s\n",c);
-    for(int i=0; i<name.size(); i++)
-    {
-        if(i%modulo == 0) printf("\n");
-        if(i%(modulo*modulo)==0) printf("%d\n",i/(modulo*modulo));
-        printf("%f\t",name[i]);
-    }
-}
+
 
 //Procedura obsługi błędów
-void error_callback(int error, const char* description)
-{
+void error_callback(int error, const char* description) {
     fputs(description, stderr);
 }
 
 //Procedura obługi zmiany rozmiaru bufora ramki
-void windowResize(GLFWwindow* window, int width, int height)
-{
+void windowResize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
     aspect=(float)szerokoscOkna/(float)wysokoscOkna; //Stosunek szerokości do wysokości okna
 }
-void doMove()
-{
+void doMove() {
     if (keys[up]) goSRTAIGHT(player);
     if (keys[down]) goBACK(player);
     if (!keys[right]) rotateSTOP(speed_y);
@@ -110,32 +99,26 @@ void doMove()
     if (keys[right]) rotateRIGHT(speed_y);
     if (keys[left]) rotateLEFT(speed_y);
 
-    if (keys[left] && keys[up])
-    {
+    if (keys[left] && keys[up]) {
         rotateLEFT(speed_y);
         goSRTAIGHT(player);
     }
-    if (keys[left] && keys[down])
-    {
+    if (keys[left] && keys[down]) {
         rotateRIGHT(speed_y);
         goBACK(player);
     }
-    if (keys[right] && keys[up])
-    {
+    if (keys[right] && keys[up]) {
         rotateRIGHT(speed_y);
         goSRTAIGHT(player);
     }
-    if (keys[right] && keys[down])
-    {
+    if (keys[right] && keys[down]) {
         rotateLEFT(speed_y);
         goBACK(player);
     }
 }
 //Procedura obsługi klawiatury
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if(action == GLFW_PRESS)
-    {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if(action == GLFW_PRESS) {
         if(key == kleft) keys[left]=true;
         if(key == kright) keys[right]=true;
         if(key == kup) keys[up]=true;
@@ -144,23 +127,23 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     printf("CAMERA: X=%f Y=%f Z=%f\n",camera.x,camera.y,camera.z);
     printf("player: X=%f Y=%f Z=%f\n",player->position.x,player->position.y,player->position.z);
 
-    if (action == GLFW_RELEASE)
-    {
+    if (action == GLFW_RELEASE) {
         if(key == kleft) keys[left]=false;
         if(key == kright) keys[right]=false;
         if(key == kup) keys[up]=false;
         if(key == kdown) keys[down]=false;
     }
 }
-void LetItBeLight()
-{
+void LetItBeLight() {
     GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
     GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
     GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-    GLfloat position0[] = { -2.0f, 2.0f, -2.0f, 1.0f };
-    GLfloat position1[] = { -2.0f, 2.0f, 2.0f, 1.0f };
-    GLfloat position2[] = { 2.0f, 2.0f, -2.0f, 1.0f };
-    GLfloat position3[] = { 2.0f, 2.0f, 2.0f, 1.0f };
+    GLfloat position0[] = { -2.0f, 4.0f, -2.0f, 1.0f };
+    GLfloat position1[] = { -2.0f, 4.0f, 2.0f, 1.0f };
+    GLfloat position2[] = { 2.0f, 4.0f, -2.0f, 1.0f };
+    GLfloat position3[] = { 2.0f, 4.0f, 2.0f, 1.0f };
+
+    //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
     glEnable(GL_LIGHTING);
 
     glEnable(GL_LIGHT0);
@@ -189,13 +172,11 @@ void LetItBeLight()
 
 }
 
-void wczytajObraz(GLuint &tex, std::string path)
-{
+void wczytajObraz(GLuint &tex, std::string path) {
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
     unsigned error = lodepng::decode(image, width, height, path);
-    if(error != 0)
-    {
+    if(error != 0) {
         printf("%s\n",lodepng_error_text(error));
         exit(1);
     }
@@ -213,8 +194,7 @@ void wczytajObraz(GLuint &tex, std::string path)
 }
 
 //Procedura inicjująca
-void initOpenGLProgram(GLFWwindow* window)
-{
+void initOpenGLProgram(GLFWwindow* window) {
     //************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
     glfwSetFramebufferSizeCallback(window, windowResize); //Zarejestruj procedurę obsługi zmiany rozdzielczości bufora ramki
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
@@ -235,8 +215,7 @@ void initOpenGLProgram(GLFWwindow* window)
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window)
-{
+void drawScene(GLFWwindow* window) {
     //************Tutaj umieszczaj kod rysujący obraz******************l
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wyczyść bufor kolorów (czyli przygotuj "płótno" do rysowania)
@@ -264,24 +243,21 @@ void drawScene(GLFWwindow* window)
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }
 
-int main(void)
-{
+int main(void) {
     mapa->drawMapInConsole();
 
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
 
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
-    if (!glfwInit())   //Zainicjuj bibliotekę GLFW
-    {
+    if (!glfwInit()) { //Zainicjuj bibliotekę GLFW
         fprintf(stderr, "Nie można zainicjować GLFW.\n");
         exit(EXIT_FAILURE);
     }
 
     window = glfwCreateWindow(szerokoscOkna, wysokoscOkna, "Paca-Mana", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
-    if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
-    {
+    if (!window) { //Jeżeli okna nie udało się utworzyć, to zamknij program
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
@@ -290,8 +266,7 @@ int main(void)
     glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
 
     GLenum err;
-    if ((err=glewInit()) != GLEW_OK)   //Zainicjuj bibliotekę GLEW
-    {
+    if ((err=glewInit()) != GLEW_OK) { //Zainicjuj bibliotekę GLEW
         fprintf(stderr, "Nie można zainicjować GLEW: %s\n", glewGetErrorString(err));
         exit(EXIT_FAILURE);
     }
@@ -301,15 +276,15 @@ int main(void)
     glfwSetTime(0); //Wyzeruj timer
 
     //Główna pętla
-    while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
-    {
+    while (!glfwWindowShouldClose(window)) { //Tak długo jak okno nie powinno zostać zamknięte
         doMove();
-        player->colisionDetect(mapa);
+        player->colisionDetect(mapa,colision_table);
         player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
         drawScene(window); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
+
     //Usunięcie tekstury z pamięci karty graficznej – po głownej pętli
     glDeleteTextures(1,&texSciana);
     glDeleteTextures(1,&texPodloga);

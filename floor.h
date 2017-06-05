@@ -3,10 +3,9 @@
 
 #include "model.h"
 
-class Floor: public Model
-{
+class Floor: public Model {
 public:
-    Floor();
+    Floor(colision_length &colision_length);
     ~Floor();
     void drawSolid(GLuint &tex,mat4 &V);
 private:

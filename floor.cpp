@@ -9,18 +9,15 @@
 
 using namespace glm;
 
-Floor::Floor()
-{
-    bool res = loadOBJ(mFloor, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
-    if(!res)
-    {
+Floor::Floor(colision_length &colision_length) {
+    bool res = loadOBJ(mFloor, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount,colision_length);
+    if(!res) {
         printf("Nie uda³o siê wczytaæ!");
         exit(1);
     }
 }
 
-Floor::~Floor()
-{
+Floor::~Floor() {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
@@ -30,19 +27,18 @@ Floor::~Floor()
     speed = 0.0;
 }
 
-void Floor::drawSolid(GLuint &tex,mat4 &V)
-{
+void Floor::drawSolid(GLuint &tex,mat4 &V) {
     vec3 tempPosition;
-    for(int i=0;i<WYSOKOSC_MAPY;i++){
-        for(int j=0;j<SZEROKOSC_MAPY;j++){
-                tempPosition = vec3((float)i,0.0,(float)j);
+    for(int i=0; i<WYSOKOSC_MAPY; i++) {
+        for(int j=0; j<SZEROKOSC_MAPY; j++) {
+            tempPosition = vec3((float)i,0.0,(float)j);
             drawElem(tex,V,tempPosition);
         }
     }
 }
 
-void Floor::drawElem(GLuint &tex,mat4 &V,vec3 &position){
-glEnable(GL_NORMALIZE);
+void Floor::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
+    glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);

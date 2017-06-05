@@ -3,10 +3,9 @@
 
 #include "model.h"
 
-class Wall: public Model
-{
+class Wall: public Model {
 public:
-    Wall();
+    Wall(colision_length &colision_length);
     ~Wall();
     void drawSolid(GLuint &tex,mat4 &V);
 };
