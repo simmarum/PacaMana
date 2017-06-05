@@ -21,5 +21,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define CONSTANTS_H
 
 const float PI = 3.141592653589793f;
+const int WYSOKOSC_MAPY = 17;
+const int SZEROKOSC_MAPY = 23;
 
 #endif
