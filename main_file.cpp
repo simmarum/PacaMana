@@ -42,17 +42,18 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define tfloor "tekstury/floor.png"
 #define tplayer "tekstury/pacman.png"
 
-#define kup  GLFW_KEY_UP
-#define kdown  GLFW_KEY_DOWN
-#define kleft  GLFW_KEY_LEFT
-#define kright  GLFW_KEY_RIGHT
+#define kup  GLFW_KEY_W
+#define kdown  GLFW_KEY_S
+#define kleft  GLFW_KEY_A
+#define kright  GLFW_KEY_D
+#define klook_back  GLFW_KEY_J
 
 #define nop 0
 #define up  1
 #define down  2
 #define left  3
 #define right  4
-
+#define look_back 5
 using namespace glm;
 
 colision_length colision_table[MAX_MODEL_ON_MAP];
@@ -123,6 +124,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if(key == kright) keys[right]=true;
         if(key == kup) keys[up]=true;
         if(key == kdown) keys[down]=true;
+        if(key == klook_back) keys[look_back]=true;
     }
     printf("CAMERA: X=%f Y=%f Z=%f\n",camera.x,camera.y,camera.z);
     printf("player: X=%f Y=%f Z=%f\n",player->position.x,player->position.y,player->position.z);
@@ -132,6 +134,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if(key == kright) keys[right]=false;
         if(key == kup) keys[up]=false;
         if(key == kdown) keys[down]=false;
+        if(key == klook_back) keys[look_back]=false;
     }
 }
 void LetItBeLight() {
@@ -222,7 +225,9 @@ void drawScene(GLFWwindow* window) {
 
     //***Przygotowanie do rysowania****
     mat4 P=perspective(35.0f*PI/180.0f,aspect,1.0f,30.0f); //Wylicz macierz rzutowania P
-    mat4 V=lookAt( //Wylicz macierz widoku
+    mat4 V;
+    if(!keys[look_back]){
+    V=lookAt( //Wylicz macierz widoku
                vec3(player->position.x-camera_far*cos(player->rotation.y),
                     player->position.y+camera_angle,
                     player->position.z+camera_far*sin(player->rotation.y)),
@@ -230,6 +235,17 @@ void drawScene(GLFWwindow* window) {
                     player->position.y+0.3,
                     player->position.z-camera_far*sin(player->rotation.y)),
                vec3(0.0f,1.0f,0.0f));
+    } else {
+        printf("BACK\n");
+      V=lookAt( //Wylicz macierz widoku
+               vec3(player->position.x+camera_far*cos(player->rotation.y),
+                    player->position.y+camera_angle,
+                    player->position.z-camera_far*sin(player->rotation.y)),
+               vec3(player->position.x-camera_far*cos(player->rotation.y),
+                    player->position.y+0.3,
+                    player->position.z+camera_far*sin(player->rotation.y)),
+               vec3(0.0f,1.0f,0.0f));
+    }
     glMatrixMode(GL_PROJECTION); //Włącz tryb modyfikacji macierzy rzutowania
     glLoadMatrixf(value_ptr(P)); //Załaduj macierz rzutowania
     glMatrixMode(GL_MODELVIEW);  //Włącz tryb modyfikacji macierzy model-widok
