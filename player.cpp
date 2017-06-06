@@ -150,7 +150,7 @@ int Player::colisionDetect(Map* &mapa,colision_length colision_table[]) {
                 && colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[2].toZ
                 >= fabs((pz-1)-this->position.z)) {
             printf("Zderzenie sciana 128\n");
-            wynik +=182;
+            wynik +=128;
         }
     }
     return wynik;

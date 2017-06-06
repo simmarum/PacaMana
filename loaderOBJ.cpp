@@ -86,13 +86,12 @@ bool loadOBJ( const char * path,
             normalIndices.push_back(normalIndex[2]);
         }
     }
-
     colision_length.toX=(maxX-minX)/2;
     colision_length.toZ=(maxZ-minZ)/2;
     colision_length.radius=sqrt((maxX-minX)*(maxX-minX) + (maxZ-minZ)*(maxZ-minZ))/2;
 
-    float temp_vect_normals[3*vertexIndices.size()];
-    for(unsigned int i=0; i<3*vertexIndices.size(); i++) {
+    float temp_vect_normals[temp_vertices.size()];
+    for(unsigned int i=0; i<temp_vertices.size(); i++) {
         temp_vect_normals[i]=0.0f;
     }
 
@@ -110,27 +109,26 @@ bool loadOBJ( const char * path,
         temp_vect_normals[vertexIndex] += temp_normals[ normalIndex ];
         temp_vect_normals[vertexIndex+1] += temp_normals[ normalIndex +1];
         temp_vect_normals[vertexIndex+2] += temp_normals[ normalIndex +2];
-
     }
-    for( unsigned int i=0; i<normalIndices.size(); i++ ) {
-        unsigned int normalIndex = 3*(normalIndices[i]-1);
-        float normal = temp_normals[ normalIndex ];
-        out_normals.push_back(normal);
-        normal = temp_normals[ normalIndex+1 ];
-        out_normals.push_back(normal);
-        normal = temp_normals[ normalIndex+2 ];
-        out_normals.push_back(normal);
-    }
-    for(unsigned int i=0; i<vertexIndices.size(); i++) {
-        glm::vec3 temp = glm::vec3(temp_vect_normals[3*i],
-                                   temp_vect_normals[3*i+1],
-                                   temp_vect_normals[3*i+2]);
+    for(unsigned int i=0; i<temp_vertices.size();) {
+        glm::vec3 temp = glm::vec3(temp_vect_normals[i],
+                                   temp_vect_normals[i+1],
+                                   temp_vect_normals[i+2]);
         glm::vec3 temp2 = glm::normalize(temp);
+        temp_vect_normals[i]=temp2.x;
+        temp_vect_normals[i+1]=temp2.y;
+        temp_vect_normals[i+2]=temp2.z;
+        i+=3;
+    }
+    for( unsigned int i=0; i<vertexIndices.size(); i++ ) {
+        unsigned int vertexIndex = 3*(vertexIndices[i]-1);
 
-        out_normals.push_back(temp2.x);
-        out_normals.push_back(temp2.y);
-        out_normals.push_back(temp2.z);
-
+        float normal = temp_vect_normals[ vertexIndex ];
+        out_normals.push_back(normal);
+        normal = temp_vect_normals[ vertexIndex+1 ];
+        out_normals.push_back(normal);
+        normal = temp_vect_normals[ vertexIndex+2 ];
+        out_normals.push_back(normal);
     }
     for( unsigned int i=0; i<uvIndices.size(); i++ ) {
         unsigned int uvIndex = 2*(uvIndices[i]-1);

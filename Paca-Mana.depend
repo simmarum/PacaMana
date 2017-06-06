@@ -1184,7 +1184,7 @@
 	<vector>
 	"struct_cosilion.h"
 
-1496734851 source:e:\github\pacamana\loaderobj.cpp
+1496765043 source:e:\github\pacamana\loaderobj.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1208,7 +1208,7 @@
 	<iostream>
 	"lodepng.h"
 
-1496696374 source:e:\github\pacamana\main_file.cpp
+1496769364 source:e:\github\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1234,15 +1234,15 @@
 1496694700 e:\github\pacamana\wall.h
 	"model.h"
 
-1496696619 e:\github\pacamana\player.h
+1496769210 e:\github\pacamana\player.h
 	"model.h"
 	"map.h"
 
-1496694700 e:\github\pacamana\map.h
+1496768932 e:\github\pacamana\map.h
 	"wall.h"
 	"constants.h"
 
-1496673510 e:\github\pacamana\move.h
+1496769329 e:\github\pacamana\move.h
 	"player.h"
 
 1496694642 source:e:\github\pacamana\map.cpp
@@ -1256,10 +1256,11 @@
 1496694700 source:e:\github\pacamana\model.cpp
 	"model.h"
 
-1496694700 source:e:\github\pacamana\move.cpp
+1496770848 source:e:\github\pacamana\move.cpp
+	<stdio.h>
 	<move.h>
 
-1496736347 source:e:\github\pacamana\player.cpp
+1496770892 source:e:\github\pacamana\player.cpp
 	<stdio.h>
 	<cstdlib>
 	"player.h"

@@ -92,8 +92,8 @@ void windowResize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
     aspect=(float)szerokoscOkna/(float)wysokoscOkna; //Stosunek szerokości do wysokości okna
 }
-void doMove() {
-    if (keys[up]) goSRTAIGHT(player);
+void doMove(Map* &mapa,colision_length colision_table[]) {
+    if (keys[up]) goSRTAIGHT(player,mapa,colision_table);
     if (keys[down]) goBACK(player);
     if (!keys[right]) rotateSTOP(speed_y);
     if (!keys[left]) rotateSTOP(speed_y);
@@ -102,7 +102,7 @@ void doMove() {
 
     if (keys[left] && keys[up]) {
         rotateLEFT(speed_y);
-        goSRTAIGHT(player);
+        goSRTAIGHT(player,mapa,colision_table);
     }
     if (keys[left] && keys[down]) {
         rotateRIGHT(speed_y);
@@ -110,7 +110,7 @@ void doMove() {
     }
     if (keys[right] && keys[up]) {
         rotateRIGHT(speed_y);
-        goSRTAIGHT(player);
+        goSRTAIGHT(player,mapa,colision_table);
     }
     if (keys[right] && keys[down]) {
         rotateLEFT(speed_y);
@@ -137,16 +137,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if(key == klook_back) keys[look_back]=false;
     }
 }
-void LetItBeLight() {
-    GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
-    GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-    GLfloat position0[] = { -2.0f, 4.0f, -2.0f, 1.0f };
-    GLfloat position1[] = { -2.0f, 4.0f, 2.0f, 1.0f };
-    GLfloat position2[] = { 2.0f, 4.0f, -2.0f, 1.0f };
-    GLfloat position3[] = { 2.0f, 4.0f, 2.0f, 1.0f };
 
-    //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
+
+void LetItBeLight() {
+    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat diffuseLight[] = { 0.4f, 0.4f, 0.4, 1.0f };
+    GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+    GLfloat position0[] = { 2.0f, 2.0f, -2.0f, 1.0f };
+    GLfloat position1[] = { -2.0, 2.0f, -2.0f, 1.0f };
+
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
     glEnable(GL_LIGHTING);
 
     glEnable(GL_LIGHT0);
@@ -160,19 +160,6 @@ void LetItBeLight() {
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
     glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
     glLightfv(GL_LIGHT1, GL_POSITION, position1);
-
-    glEnable(GL_LIGHT2);
-    glLightfv(GL_LIGHT2, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuseLight);
-    glLightfv(GL_LIGHT2, GL_SPECULAR, specularLight);
-    glLightfv(GL_LIGHT2, GL_POSITION, position2);
-
-    glEnable(GL_LIGHT3);
-    glLightfv(GL_LIGHT3, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT3, GL_DIFFUSE, diffuseLight);
-    glLightfv(GL_LIGHT3, GL_SPECULAR, specularLight);
-    glLightfv(GL_LIGHT3, GL_POSITION, position3);
-
 }
 
 void wczytajObraz(GLuint &tex, std::string path) {
@@ -203,7 +190,7 @@ void initOpenGLProgram(GLFWwindow* window) {
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
 
     LetItBeLight(); // swiatlo
-
+    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST); //Włącz używanie budora głębokości
 
     /// - > Wczytaj obrazek - sciana
@@ -250,7 +237,6 @@ void drawScene(GLFWwindow* window) {
     glLoadMatrixf(value_ptr(P)); //Załaduj macierz rzutowania
     glMatrixMode(GL_MODELVIEW);  //Włącz tryb modyfikacji macierzy model-widok
 
-
     podloga->drawSolid(texPodloga,V);
     mapa->drawSolid(texSciana,V);
     player->drawSolid(texPlayer,V);
@@ -293,8 +279,8 @@ int main(void) {
 
     //Główna pętla
     while (!glfwWindowShouldClose(window)) { //Tak długo jak okno nie powinno zostać zamknięte
-        doMove();
-        player->colisionDetect(mapa,colision_table);
+        doMove(mapa,colision_table);
+       // player->colisionDetect(mapa,colision_table);
         player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
         drawScene(window); //Wykonaj procedurę rysującą
