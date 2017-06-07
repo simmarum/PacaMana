@@ -15,13 +15,7 @@ public:
     std::vector< float > TEMPnormals;
     unsigned int TEMPvCount;
 
-    int mapa[WYSOKOSC_MAPY][SZEROKOSC_MAPY];
-
-private:
-    void drawElem(GLuint &texWall,mat4 &V,vec3 &position);
-    std::vector< Wall*> mapaScian;
-    Wall *wall;
-    int mapaOriginal[WYSOKOSC_MAPY][SZEROKOSC_MAPY] = {
+    int mapa[WYSOKOSC_MAPY][SZEROKOSC_MAPY] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, // 0 - puste
         {1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1}, // 1 - œciana normalna
         {1,1,1,0,1,1,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1}, // 2 - pozycja Pacmana
@@ -36,10 +30,15 @@ private:
         {1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1},
         {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1},
         {1,0,0,0,1,0,1,1,1,0,1,1,0,1,1,0,1,0,1,0,0,0,1},
-        {1,0,3,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1},
+        {1,0,2,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1},
         {1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
+
+private:
+    void drawElem(GLuint &texWall,mat4 &V,vec3 &position);
+    Wall *wall;
+
 };
 
 #endif // MAP_H_INCLUDED

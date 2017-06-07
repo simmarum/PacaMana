@@ -38,48 +38,50 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #define szerokoscOkna 500
 #define wysokoscOkna 500
+
+// tekstury dla obiektow
 #define twall "tekstury/crate.png"
 #define tfloor "tekstury/floor.png"
 #define tplayer "tekstury/pacman.png"
 
+// definicja klawiszy (latwa zmiana sterowania w kodzie)
 #define kup  GLFW_KEY_W
 #define kdown  GLFW_KEY_S
 #define kleft  GLFW_KEY_A
 #define kright  GLFW_KEY_D
 #define klook_back  GLFW_KEY_J
 
+// asocjacja klawiszy z indeksami dla tablicy klawiszy...
 #define nop 0
 #define up  1
 #define down  2
 #define left  3
 #define right  4
 #define look_back 5
+
 using namespace glm;
 
+// tablica kolizji (aby nie trzymiac wymiarow w poszczegolnych obiektach tylko ogolnie dla danego typu obiektu
 colision_length colision_table[MAX_MODEL_ON_MAP];
 
-Floor *podloga = new Floor(colision_table[0]);
-Map *mapa = new Map(colision_table[1]);
-Player *player = new Player(mapa,colision_table[2]);
+// potrzbne modele
+Floor *podloga = new Floor(colision_table[mFLOR]);
+Map *mapa = new Map(colision_table[mWALL]);
+Player *player = new Player(mapa,colision_table[mPMAN]);
 
 
 float aspect=1.0f; //Aktualny stosunek szerokości do wysokości okna
-float speed_zero= 0.0f;
 float speed_y=0; //Szybkość kątowa obrotu obiektu w radianach na sekundę wokół osi y
-float camera_speed=0.05;
-float camera_far = 1.3;
-float camera_angle = 0.4;
-vec3 camera = vec3(player->position.x-camera_far*cos(player->rotation.y),
-                   player->position.y+camera_angle,
-                   player->position.z+camera_far*sin(player->rotation.y));
+float camera_far = 1.3; // odleglosc kamery (promiec okregu po ktorym porusza sie kamera wokol PacMana)
+float camera_angle = 0.4; // odleglosc camery nad PacManem w osi Y
 
+// tablica dla kawiszy (aby pamietac jakie byly i bezproblemowo robic kombinajce klawiszy)
 bool keys[32];
 
+// definicja uchwytow na tekstury
 GLuint texSciana;
 GLuint texPodloga;
 GLuint texPlayer;
-
-
 
 
 //Procedura obsługi błędów
@@ -90,33 +92,37 @@ void error_callback(int error, const char* description) {
 //Procedura obługi zmiany rozmiaru bufora ramki
 void windowResize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
+    ///(u nas ma byc staly!)
     aspect=(float)szerokoscOkna/(float)wysokoscOkna; //Stosunek szerokości do wysokości okna
 }
-void doMove(Map* &mapa,colision_length colision_table[]) {
-    if (keys[up]) goSRTAIGHT(player,mapa,colision_table);
-    if (keys[down]) goBACK(player);
-    if (!keys[right]) rotateSTOP(speed_y);
-    if (!keys[left]) rotateSTOP(speed_y);
-    if (keys[right]) rotateRIGHT(speed_y);
-    if (keys[left]) rotateLEFT(speed_y);
 
-    if (keys[left] && keys[up]) {
+// funkcja ktora powoduje ruch w kazdym kierunku (po skosie dwa klawisze tez) ogolnie od klawiszy jest
+void doMove(Map* &mapa,colision_length colision_table[]) {
+    if (keys[up]) goSRTAIGHT(player,mapa,colision_table); // do przodu
+    if (keys[down]) goBACK(player); // do tylu
+    if (!keys[right]) rotateSTOP(speed_y); // zatrzymanie obrotu w prawo
+    if (!keys[left]) rotateSTOP(speed_y);// zatrzymanie oborotu w lewo
+    if (keys[right]) rotateRIGHT(speed_y); // obrot w prawo
+    if (keys[left]) rotateLEFT(speed_y); // obrot w lewo
+
+    if (keys[left] && keys[up]) { // po skosie gora/lewo
         rotateLEFT(speed_y);
         goSRTAIGHT(player,mapa,colision_table);
     }
-    if (keys[left] && keys[down]) {
+    if (keys[left] && keys[down]) { // po skosie dol/lewo
         rotateRIGHT(speed_y);
         goBACK(player);
     }
-    if (keys[right] && keys[up]) {
+    if (keys[right] && keys[up]) { // po skosie gora/prawo
         rotateRIGHT(speed_y);
         goSRTAIGHT(player,mapa,colision_table);
     }
-    if (keys[right] && keys[down]) {
+    if (keys[right] && keys[down]) { // po skosie dol/prawo
         rotateLEFT(speed_y);
         goBACK(player);
     }
 }
+
 //Procedura obsługi klawiatury
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(action == GLFW_PRESS) {
@@ -126,9 +132,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if(key == kdown) keys[down]=true;
         if(key == klook_back) keys[look_back]=true;
     }
-    printf("CAMERA: X=%f Y=%f Z=%f\n",camera.x,camera.y,camera.z);
-    printf("player: X=%f Y=%f Z=%f\n",player->position.x,player->position.y,player->position.z);
-
+printf("PLAYER: X=%f Y=%f Z=%f\n",player->position.x,player->position.y,player->position.z);
     if (action == GLFW_RELEASE) {
         if(key == kleft) keys[left]=false;
         if(key == kright) keys[right]=false;
@@ -138,15 +142,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
-
+// inicjalizacja swiatla na mapie
 void LetItBeLight() {
-    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    GLfloat diffuseLight[] = { 0.4f, 0.4f, 0.4, 1.0f };
-    GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-    GLfloat position0[] = { 2.0f, 2.0f, -2.0f, 1.0f };
-    GLfloat position1[] = { -2.0, 2.0f, -2.0f, 1.0f };
+    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f }; // otoczenia
+    GLfloat diffuseLight[] = { 0.4f, 0.4f, 0.4, 1.0f }; // rozproszenia
+    GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f }; // odbicia
+    GLfloat position0[] = { 2.0f, 2.0f, -2.0f, 1.0f }; // pozycja za pacmanem po prawej
+    GLfloat position1[] = { -2.0, 2.0f, -2.0f, 1.0f }; // pozycja za pacmanem po lewej
 
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
+    //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
     glEnable(GL_LIGHTING);
 
     glEnable(GL_LIGHT0);
@@ -167,9 +171,10 @@ void wczytajObraz(GLuint &tex, std::string path) {
     unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
     unsigned error = lodepng::decode(image, width, height, path);
     if(error != 0) {
-        printf("%s\n",lodepng_error_text(error));
+        printf("%s\n",lodepng_error_text(error)); // wypisanie bledu jak cos nie pojdzie
         exit(1);
     }
+
     //Import do pamięci karty graficznej
     glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
     glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
@@ -190,7 +195,7 @@ void initOpenGLProgram(GLFWwindow* window) {
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
 
     LetItBeLight(); // swiatlo
-    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_COLOR_MATERIAL); // wlaczenie kolorow w opengl
     glEnable(GL_DEPTH_TEST); //Włącz używanie budora głębokości
 
     /// - > Wczytaj obrazek - sciana
@@ -212,8 +217,8 @@ void drawScene(GLFWwindow* window) {
 
     //***Przygotowanie do rysowania****
     mat4 P=perspective(35.0f*PI/180.0f,aspect,1.0f,30.0f); //Wylicz macierz rzutowania P
-    mat4 V;
-    if(!keys[look_back]){
+    mat4 V; // macierz widoku
+    if(!keys[look_back]){ /// widok do przodu
     V=lookAt( //Wylicz macierz widoku
                vec3(player->position.x-camera_far*cos(player->rotation.y),
                     player->position.y+camera_angle,
@@ -222,8 +227,7 @@ void drawScene(GLFWwindow* window) {
                     player->position.y+0.3,
                     player->position.z-camera_far*sin(player->rotation.y)),
                vec3(0.0f,1.0f,0.0f));
-    } else {
-        printf("BACK\n");
+    } else { /// widok do tylu
       V=lookAt( //Wylicz macierz widoku
                vec3(player->position.x+camera_far*cos(player->rotation.y),
                     player->position.y+camera_angle,
@@ -243,6 +247,13 @@ void drawScene(GLFWwindow* window) {
 
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
+}
+
+//usuwanie obiektow
+void usunObiekty(){
+delete player;
+delete mapa;
+delete podloga;
 }
 
 int main(void) {
@@ -280,16 +291,19 @@ int main(void) {
     //Główna pętla
     while (!glfwWindowShouldClose(window)) { //Tak długo jak okno nie powinno zostać zamknięte
         doMove(mapa,colision_table);
-       // player->colisionDetect(mapa,colision_table);
         player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kąta obrotu i zwiększ aktualny kąt
         glfwSetTime(0); //Wyzeruj timer
         drawScene(window); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
 
+    //Usuniecie obiektow
+    usunObiekty();
+
     //Usunięcie tekstury z pamięci karty graficznej – po głownej pętli
     glDeleteTextures(1,&texSciana);
     glDeleteTextures(1,&texPodloga);
+    glDeleteTextures(1,&texPlayer);
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
     exit(EXIT_SUCCESS);

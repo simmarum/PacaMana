@@ -13,12 +13,13 @@ using namespace glm;
 Map::Map(colision_length &colision_length) {
     for(int i=0; i<WYSOKOSC_MAPY; i++) {
         for(int j=0; j<SZEROKOSC_MAPY; j++) {
-            mapa[i][j]=mapaOriginal[i][j];
+            if(mapa[i][j]>=MAX_MODEL_ON_MAP){
+                printf("Na mapie sa nie znane wartosci!\nX: %d Y:%d\nWartosc: %d",i,j,mapa[i][j]);
+                exit(EXIT_FAILURE);
+            }
         }
     }
-    mapaScian.clear();
     wall = new Wall(colision_length);
-
 }
 
 void Map::drawMapInConsole() {
@@ -42,7 +43,7 @@ void Map::drawSolid(GLuint &texWall,mat4 &V) {
             if(this->mapa[i][j] == 1) {
                 wall->position = vec3((float)i,1.0,(float)j);
                 wall->drawSolid(texWall,V);
-                if(i==0 || j==0 || i==WYSOKOSC_MAPY-1 || j==SZEROKOSC_MAPY-1) {
+                if(i==0 || j==0 || i==WYSOKOSC_MAPY-1 || j==SZEROKOSC_MAPY-1) { // rysowanie na okolo wyzszych scian
                     wall->position = vec3((float)i,2.0,(float)j);
                     wall->drawSolid(texWall,V);
                 }

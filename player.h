@@ -9,7 +9,7 @@ public:
     Player(Map* &mapa,colision_length &colision_length);
     ~Player();
     void drawSolid(GLuint &tex,mat4 &V);
-    int colisionDetect(Map* &mapa,colision_length colision_table[]);
+    void colisionDetect(Map* &mapa,colision_length colision_table[]);
 private:
     void findPosition(Map* &mapa);
 

@@ -28,10 +28,11 @@ Player::~Player() {
     TEMPnormals.clear();
 }
 
+// znajduje poczatkowa pozycje pacmana na mapie
 void Player::findPosition(Map* &mapa) {
     for(int i=0; i<WYSOKOSC_MAPY; i++) {
         for(int j=0; j<SZEROKOSC_MAPY; j++) {
-            if(mapa->mapa[i][j] == 3) {
+            if(mapa->mapa[i][j] == mPMAN) {
                 this->position = vec3((float)i,0.75,(float)j);
             }
         }
@@ -75,84 +76,147 @@ void Player::drawSolid(GLuint &tex,mat4 &V) {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-int Player::colisionDetect(Map* &mapa,colision_length colision_table[]) {
+void Player::colisionDetect(Map* &mapa,colision_length colision_table[]) {
+    /*
+        SCHEMAT DETEKCJI SCIAN
+    X /|\
+    |   ________   ________   ________
+    |  |        | |        | |        |
+    |  |        | |        | |        |
+    |  |   8   b| |   1    | |b  2    |
+    |  |        | |        | |        |
+    |  |___a____| |________| |___a____|
+    |   ________   ________   ________
+    |  |        | |        | |        |
+    |  |        | |  PAC   | |        |
+    |  |   7    | |  MAN   | |   3    |
+    |  |        | |        | |        |
+    |  |________| |________| |________|
+    |   ________   ________   ________
+    |  |   a    | |        | |   a    |
+    |  |        | |        | |        |
+    |  |   6   b| |   5    | |b  4    |
+    |  |        | |        | |        |
+    |  |________| |________| |________|
+    |
+    |------------------------------------->
+                                        Z
+    */
+    int px = (int)(this->position.x+0.5f); // znajduje srodek pola w x
+    int pz = (int)(this->position.z+0.5f); // znajduje srodek pola w z
+    // dodawanie po 0.5 poniewaz tyle ma nasze pole w grze np. (0,0) pozycja to srodki bedzie na (0.5,0.5)
 
-    int px = (int)(this->position.x+0.5f);
-    int pz = (int)(this->position.z+0.5f);
-    int wynik = 0;
-
+    /// Kolizja ze sciana nr 1
     if(mapa->mapa[px+1][pz]==1 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz>=0 && pz <SZEROKOSC_MAPY) {
-        printf("Sciana 1\n");
-        if(colision_table[mapa->mapa[px+1][pz]].toX + colision_table[2].toX
+        if(colision_table[mapa->mapa[px+1][pz]].toX + colision_table[mPMAN].toX
                 >= fabs((px+1)-this->position.x)) {
-            printf("Zderzenie sciana 1\n");
-            wynik +=1;
+            // zderzenie !
+            position.x = px+1 - (colision_table[mapa->mapa[px+1][pz]].toX + colision_table[mPMAN].toX);
         }
     }
+
+    /// Kolizja ze sciana nr 2
     if(mapa->mapa[px+1][pz+1]==1 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY) {
-        printf("Sciana 2\n");
-        if(colision_table[mapa->mapa[px+1][pz]].toX + colision_table[2].toX
+        if(colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[mPMAN].toX
                 >= fabs((px+1)-this->position.x)
-                && colision_table[mapa->mapa[px+1][pz]].toZ + colision_table[2].toZ
+                && colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[mPMAN].toZ
                 >= fabs((pz+1)-this->position.z)) {
-            printf("Zderzenie sciana 2\n");
-            wynik +=2;
+            // zderzenie !
+            if(fabs((pz+1)-this->position.z) < colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[mPMAN].toZ
+                    && fabs((pz+1)-this->position.z) < fabs((px+1)-this->position.x)) {
+                /// Kolizja ze sciana nr 2a
+                position.x = px+1 - (colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[mPMAN].toX);
+            } else if(fabs((px+1)-this->position.x) < colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[mPMAN].toX
+                      && fabs((px+1)-this->position.x) < fabs((pz+1)-this->position.z) ) {
+                /// Kolizja ze sciana nr 2b
+                position.z = pz+1 - (colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[mPMAN].toZ);
+            }
         }
     }
+
+    /// Kolizja ze sciana nr 3
     if(mapa->mapa[px][pz+1]==1 && px>=0 && px<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY) {
-        printf("Sciana 4\n");
-        if(colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[2].toZ
+        if(colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[mPMAN].toZ
                 >= fabs((pz+1)-this->position.z)) {
-            printf("Zderzenie sciana 4\n");
-            wynik +=4;
+            // zderzenie !
+            position.z = pz+1 - (colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[mPMAN].toZ);
         }
     }
+
+    /// Kolizja ze sciana nr 4
     if(mapa->mapa[px-1][pz+1]==1 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY) {
-        printf("Sciana 8\n");
-        if(colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[2].toX
+        if(colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[mPMAN].toX
                 >= fabs((px-1)-this->position.x)
-                && colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[2].toZ
+                && colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[mPMAN].toZ
                 >= fabs((pz+1)-this->position.z)) {
-            printf("Zderzenie sciana 8\n");
-            wynik +=8;
+            // zderzenie !
+            if(fabs((pz+1)-this->position.z) < colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[mPMAN].toZ
+                    && fabs((pz+1)-this->position.z) < fabs((px-1)-this->position.x)) {
+                /// Kolizja ze sciana nr 4a
+                position.x = px-1 + (colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[mPMAN].toX);
+            } else if(fabs((px-1)-this->position.x) < colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[mPMAN].toX
+                      && fabs((px-1)-this->position.x) < fabs((pz+1)-this->position.z) ) {
+                /// Kolizja ze sciana nr 4b
+                position.z = pz+1 - (colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[mPMAN].toZ);
+            }
         }
     }
+
+    /// Kolizja ze sciana nr 5
     if(mapa->mapa[px-1][pz]==1 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz>=0 && pz <SZEROKOSC_MAPY) {
-        printf("Sciana 16\n");
-        if(colision_table[mapa->mapa[px-1][pz]].toX + colision_table[2].toX
+        if(colision_table[mapa->mapa[px-1][pz]].toX + colision_table[mPMAN].toX
                 >= fabs((px-1)-this->position.x)) {
-            printf("Zderzenie sciana 16\n");
-            wynik +=16;
+            // zderzenie !
+            position.x = px-1 + (colision_table[mapa->mapa[px-1][pz]].toX + colision_table[mPMAN].toX);
+
         }
     }
+
+    /// Kolizja ze sciana nr 6
     if(mapa->mapa[px-1][pz-1]==1 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY) {
-        printf("Sciana 32\n");
-        if(colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[2].toX
+        if(colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[mPMAN].toX
                 >= fabs((px-1)-this->position.x)
-                && colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[2].toZ
+                && colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[mPMAN].toZ
                 >= fabs((pz-1)-this->position.z)) {
-            printf("Zderzenie sciana 32\n");
-            wynik +=32;
+            // zderzenie !
+            if(fabs((pz-1)-this->position.z) < colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[mPMAN].toZ
+                    && fabs((pz-1)-this->position.z) < fabs((px-1)-this->position.x)) {
+                /// Kolizja ze sciana nr 6a
+                position.x = px-1 + (colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[mPMAN].toX);
+            } else if(fabs((px-1)-this->position.x) < colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[mPMAN].toX
+                      && fabs((px-1)-this->position.x) < fabs((pz-1)-this->position.z) ) {
+                /// Kolizja ze sciana nr 6b
+                position.z = pz-1 + (colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[mPMAN].toZ);
+            }
         }
     }
+
+    /// Kolizja ze sciana nr 7
     if(mapa->mapa[px][pz-1]==1 && px>=0 && px<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY) {
-        printf("Sciana 64\n");
-        if(colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[2].toZ
+        if(colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[mPMAN].toZ
                 >= fabs((pz-1)-this->position.z)) {
-            printf("Zderzenie sciana 64\n");
-            wynik +=64;
+            // zderzenie !
+            position.z = pz-1 + (colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[mPMAN].toZ);
         }
     }
+
+    /// Kolizja ze sciana nr 8
     if(mapa->mapa[px+1][pz-1]==1 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY) {
-        printf("Sciana 128\n");
-        if(colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[2].toX
+        if(colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[mPMAN].toX
                 >= fabs((px+1)-this->position.x)
-                && colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[2].toZ
+                && colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[mPMAN].toZ
                 >= fabs((pz-1)-this->position.z)) {
-            printf("Zderzenie sciana 128\n");
-            wynik +=128;
+            // zderzenie !
+            if(fabs((pz-1)-this->position.z) < colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[mPMAN].toZ
+                    && fabs((pz-1)-this->position.z) < fabs((px+1)-this->position.x)) {
+                /// Kolizja ze sciana nr 8a
+                position.x = px+1 - (colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[mPMAN].toX);
+            } else if(fabs((px+1)-this->position.x) < colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[mPMAN].toX
+                      && fabs((px+1)-this->position.x) < fabs((pz-1)-this->position.z) ) {
+                /// Kolizja ze sciana nr 8b
+                position.z = pz-1 + (colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[mPMAN].toZ);
+            }
         }
     }
-    return wynik;
 }
 
