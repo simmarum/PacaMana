@@ -15,29 +15,19 @@ Floor::Floor(colision_length &colision_length) {
         printf("Nie uda³o siê wczytaæ!");
         exit(1);
     }
+    position = vec3(0.0,0.6,0.0);
+    rotation = vec3(0.0,0.0,0.0);
+    scale = vec3(1.0,1.0,1.0);
+    speed = 0.0;
 }
 
 Floor::~Floor() {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
-    position = vec3(0.0,0.0,0.0);
-    rotation = vec3(0.0,0.0,0.0);
-    scale = vec3(1.0,1.0,1.0);
-    speed = 0.0;
 }
 
 void Floor::drawSolid(GLuint &tex,mat4 &V) {
-    vec3 tempPosition;
-    for(int i=0; i<WYSOKOSC_MAPY; i++) {
-        for(int j=0; j<SZEROKOSC_MAPY; j++) {
-            tempPosition = vec3((float)i,0.0,(float)j);
-            drawElem(tex,V,tempPosition);
-        }
-    }
-}
-
-void Floor::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
     glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -47,7 +37,7 @@ void Floor::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
     glBindTexture(GL_TEXTURE_2D,tex);
 
     mat4 M=mat4(1.0f);
-    M=translate(M,position);
+    M=translate(M,this->position);
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));

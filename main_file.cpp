@@ -40,7 +40,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define wysokoscOkna 500
 
 // tekstury dla obiektow
-#define twall "tekstury/crate.png"
+#define twall "tekstury/wood.png"
 #define tfloor "tekstury/floor.png"
 #define tplayer "tekstury/pacman.png"
 
