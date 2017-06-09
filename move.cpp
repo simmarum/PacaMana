@@ -1,19 +1,22 @@
+#include <stdio.h>
 #include <move.h>
 
-void rotateSTOP(float &speed){
-speed=0.0;
+void rotateSTOP(float &speed) {
+    speed=0.0;
 }
-void rotateLEFT(float &speed){
-speed=PI/2;
+void rotateLEFT(float &speed) {
+    speed=PI/2;
 }
-void rotateRIGHT(float &speed){
-speed=-PI/2;
+void rotateRIGHT(float &speed) {
+    speed=-PI/2;
 }
-void goSRTAIGHT(Player *player){
-player->position.x += cos(player->rotation.y)*player->speed*glfwGetTime();
-            player->position.z -= sin(player->rotation.y)*player->speed*glfwGetTime();
+void goSRTAIGHT(Player *player,Map* &mapa,colision_length colision_table[]) {
+    player->position.x += cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x
+    player->position.z -= sin(player->rotation.y)*player->speed*glfwGetTime(); // ruch z
+    player->colisionDetect(mapa,colision_table); // wykrycie kolizji
 }
-void goBACK(Player *player){
- player->position.x -= cos(player->rotation.y)*player->speed*glfwGetTime();
-            player->position.z += sin(player->rotation.y)*player->speed*glfwGetTime();
+void goBACK(Player *player) {
+    player->position.x -= cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x
+    player->position.z += sin(player->rotation.y)*player->speed*glfwGetTime(); // ruch z
+    //player->colisionDetect(mapa,colision_table); // wykrycie kolizji
 }
