@@ -8,29 +8,25 @@
 
 using namespace glm;
 
-Wall::Wall()
-{
-    bool res = loadOBJ(mWall, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
-    if(!res)
-    {
+Wall::Wall(colision_length &colision_length) {
+    bool res = loadOBJ(mWall, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount,colision_length);
+    if(!res) {
         printf("Nie udało się wczytać!");
         exit(1);
     }
     position = vec3(1.0,1.0,1.0);
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
-    speed = 0.05;
+    speed = 0.0;
 }
 
-Wall::~Wall()
-{
+Wall::~Wall() {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
 }
 
-void Wall::drawSolid(GLuint &tex,mat4 &V)
-{
+void Wall::drawSolid(GLuint &tex,mat4 &V) {
     glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -38,7 +34,7 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glBindTexture(GL_TEXTURE_2D,tex);
-
+    glShadeModel(GL_SMOOTH);
     mat4 M=mat4(1.0f);
     M=translate(M,this->position);
     M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
@@ -66,4 +62,3 @@ void Wall::drawSolid(GLuint &tex,mat4 &V)
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
-

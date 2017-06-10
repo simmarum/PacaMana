@@ -59,6 +59,11 @@
 		<Unit filename="map.h" />
 		<Unit filename="model.cpp" />
 		<Unit filename="model.h" />
+		<Unit filename="move.cpp" />
+		<Unit filename="move.h" />
+		<Unit filename="player.cpp" />
+		<Unit filename="player.h" />
+		<Unit filename="struct_cosilion.h" />
 		<Unit filename="wall.cpp" />
 		<Unit filename="wall.h" />
 		<Extensions>

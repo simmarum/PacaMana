@@ -4,13 +4,22 @@
 #include <iostream>
 #include <cstdlib>
 
+
 #include "map.h"
+#include "wall.h"
 
 using namespace glm;
 
-Map::Map()
-{
-    printf("Konstruktor mapy!");
+Map::Map(colision_length &colision_length) {
+    for(int i=0; i<WYSOKOSC_MAPY; i++) {
+        for(int j=0; j<SZEROKOSC_MAPY; j++) {
+            if(mapa[i][j]>=MAX_MODEL_ON_MAP){
+                printf("Na mapie sa nie znane wartosci!\nX: %d Y:%d\nWartosc: %d",i,j,mapa[i][j]);
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+    wall = new Wall(colision_length);
 }
 
 void Map::drawMapInConsole(bool simple) {
@@ -43,34 +52,29 @@ void Map::drawMapInConsole(bool simple) {
     }
 }
 
-Map::~Map()
-{
+Map::~Map() {
     TEMPvertices.clear();
     TEMPuvs.clear();
     TEMPnormals.clear();
-    position = vec3(0.0,0.0,0.0);
-    rotation = vec3(0.0,0.0,0.0);
-    scale = vec3(1.0,1.0,1.0);
-    speed = 0.0;
 }
 
-void Map::drawSolid(GLuint &tex,mat4 &V)
-{
-    vec3 positionTemp;
-    int width = 15;
-    int depth = 15;
-    for(int i=0;i<width;i++){
-        for(int j=0;j<depth;j++){
-            positionTemp.x = (float)i;
-            positionTemp.y = 0.0;
-            positionTemp.z = (float)j;
-            drawElem(tex,V,positionTemp);
+void Map::drawSolid(GLuint &texWall,mat4 &V) {
+    for(int i=0; i<WYSOKOSC_MAPY; i++) {
+        for(int j=0; j<SZEROKOSC_MAPY; j++) {
+            if(this->mapa[i][j] == 1) {
+                wall->position = vec3((float)i,1.0,(float)j);
+                wall->drawSolid(texWall,V);
+                if(i==0 || j==0 || i==WYSOKOSC_MAPY-1 || j==SZEROKOSC_MAPY-1) { // rysowanie na okolo wyzszych scian
+                    wall->position = vec3((float)i,2.0,(float)j);
+                    wall->drawSolid(texWall,V);
+                }
+            }
         }
     }
 }
 
-void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position){
-glEnable(GL_NORMALIZE);
+void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
+    glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cstdlib>
 
+#include "constants.h"
 #include "floor.h"
 #include "loaderOBJ.h"
 
@@ -8,44 +9,26 @@
 
 using namespace glm;
 
-Floor::Floor()
-{
-    bool res = loadOBJ(mFloor, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount);
-    if(!res)
-    {
-        printf("Nie uda³o siê wczytaæ!");
+Floor::Floor(colision_length &colision_length) {
+    bool res = loadOBJ(mFloor, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount,colision_length);
+    if(!res) {
+        printf("Nie udaÂ³o siÃª wczytaÃ¦!");
         exit(1);
     }
-}
-
-Floor::~Floor()
-{
-    TEMPvertices.clear();
-    TEMPuvs.clear();
-    TEMPnormals.clear();
-    position = vec3(0.0,0.0,0.0);
+    position = vec3(0.0,0.6,0.0);
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
     speed = 0.0;
 }
 
-void Floor::drawSolid(GLuint &tex,mat4 &V)
-{
-    vec3 positionTemp;
-    int width = 15;
-    int depth = 15;
-    for(int i=0;i<width;i++){
-        for(int j=0;j<depth;j++){
-            positionTemp.x = (float)i;
-            positionTemp.y = 0.0;
-            positionTemp.z = (float)j;
-            drawElem(tex,V,positionTemp);
-        }
-    }
+Floor::~Floor() {
+    TEMPvertices.clear();
+    TEMPuvs.clear();
+    TEMPnormals.clear();
 }
 
-void Floor::drawElem(GLuint &tex,mat4 &V,vec3 &position){
-glEnable(GL_NORMALIZE);
+void Floor::drawSolid(GLuint &tex,mat4 &V) {
+    glEnable(GL_NORMALIZE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
@@ -54,7 +37,7 @@ glEnable(GL_NORMALIZE);
     glBindTexture(GL_TEXTURE_2D,tex);
 
     mat4 M=mat4(1.0f);
-    M=translate(M,position);
+    M=translate(M,this->position);
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
