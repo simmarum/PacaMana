@@ -10,12 +10,15 @@
 
 using namespace glm;
 
-Map::Map(colision_length &colision_length) {
+Map::Map(colision_length &colision_length,std::vector <glm::vec3> &coin_position) {
     for(int i=0; i<WYSOKOSC_MAPY; i++) {
         for(int j=0; j<SZEROKOSC_MAPY; j++) {
             if(mapa[i][j]>=MAX_MODEL_ON_MAP){
                 printf("Na mapie sa nie znane wartosci!\nX: %d Y:%d\nWartosc: %d",i,j,mapa[i][j]);
                 exit(EXIT_FAILURE);
+            }
+            if(mapa[i][j] == mCOIN){
+                coin_position.push_back(vec3((float)i,0.75f,(float)j));
             }
         }
     }

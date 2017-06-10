@@ -9,7 +9,7 @@
 
 using namespace glm;
 
-Coin::Coin(Map* &mapa,colision_length &colision_length) {
+Coin::Coin(colision_length &colision_length) {
     bool res = loadOBJ(mCoinModel, this->TEMPvertices, this->TEMPuvs, this->TEMPnormals,this->TEMPvCount,colision_length);
     if(!res) {
         printf("Nie udało się wczytać!");
@@ -18,8 +18,8 @@ Coin::Coin(Map* &mapa,colision_length &colision_length) {
     position = vec3(1.0,1.0,1.0);
     rotation = vec3(0.0,0.0,0.0);
     scale = vec3(1.0,1.0,1.0);
-    speed = 2;
-    findPosition(mapa);
+    speed = 1;
+    rotation_temp = rotation.y;
 }
 
 Coin::~Coin() {
@@ -28,17 +28,13 @@ Coin::~Coin() {
     TEMPnormals.clear();
 }
 
-void Coin::findPosition(Map* &mapa) {
-    for(int i=0; i < WYSOKOSC_MAPY; i++) {
-        for(int j=0; j < SZEROKOSC_MAPY; j++) {
-            if(mapa->mapa[i][j] == mCOIN) {
-                this->position = vec3((float)i, 0.75, (float)j);
-            }
-        }
+
+void Coin::drawAll(GLuint &tex,mat4 &V,std::vector <glm::vec3> &coin_position){
+    for (int i=0;i<coin_position.size();i++){
+        this->position = coin_position[i];
+        drawSolid(tex,V);
     }
 }
-
-
 void Coin::drawSolid(GLuint &tex,mat4 &V) {
     glEnable(GL_NORMALIZE);
 
@@ -50,7 +46,10 @@ void Coin::drawSolid(GLuint &tex,mat4 &V) {
 
     mat4 M=mat4(1.0f);
     M=translate(M,this->position);
-    M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
+    this->rotation_temp += (float) (glfwGetTime()*speed);
+    this->rotation_temp = (float) (this->rotation_temp - 2*PI*(ceil(this->rotation_temp/(2*PI))));
+    this->rotation.y = this->rotation_temp;
+    M=rotate(M,this->rotation.y,vec3(0.0,1.0,0.0));
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));

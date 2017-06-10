@@ -7,7 +7,7 @@
 class Map {
 
 public:
-    Map(colision_length &colision_length);
+    Map(colision_length &colision_length,std::vector <glm::vec3> &coin_position);
     ~Map();
 
     void drawSolid(GLuint &texWall, mat4 &V);
@@ -34,8 +34,8 @@ public:
         { mWALL, mFLOR, mWALL, mWALL, mWALL, mFLOR, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL},
         { mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mWALL, mWALL},
         { mWALL, mFLOR, mCOIN, mFLOR, mWALL, mFLOR, mWALL, mWALL, mWALL, mFLOR, mWALL, mWALL, mFLOR, mWALL, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL},
-        { mWALL, mFLOR, mPMAN, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL},
-        { mWALL, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL},
+        { mWALL, mCOIN, mPMAN, mCOIN, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL},
+        { mWALL, mFLOR, mCOIN, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL},
         { mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL}
     };
 

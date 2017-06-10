@@ -65,7 +65,7 @@
 		<Unit filename="move.h" />
 		<Unit filename="player.cpp" />
 		<Unit filename="player.h" />
-		<Unit filename="struct_cosilion.h" />
+		<Unit filename="struct.h" />
 		<Unit filename="wall.cpp" />
 		<Unit filename="wall.h" />
 		<Extensions>
