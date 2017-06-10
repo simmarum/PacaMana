@@ -28,7 +28,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include "constants.h"
 
-#include "struct_cosilion.h"
+#include "struct.h"
 
 using namespace glm;
 

@@ -23,6 +23,9 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "wall.h"
 #include "floor.h"
 #include "player.h"
+#include "coin.h"
 #include "map.h"
+
+
 
 #endif

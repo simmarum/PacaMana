@@ -47,6 +47,8 @@
 			<Add directory="glew/lib" />
 		</Linker>
 		<Unit filename="allmodels.h" />
+		<Unit filename="coin.cpp" />
+		<Unit filename="coin.h" />
 		<Unit filename="constants.h" />
 		<Unit filename="floor.cpp" />
 		<Unit filename="floor.h" />
@@ -63,7 +65,7 @@
 		<Unit filename="move.h" />
 		<Unit filename="player.cpp" />
 		<Unit filename="player.h" />
-		<Unit filename="struct_cosilion.h" />
+		<Unit filename="struct.h" />
 		<Unit filename="wall.cpp" />
 		<Unit filename="wall.h" />
 		<Extensions>

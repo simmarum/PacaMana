@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 #include <vector>
-#include "struct_cosilion.h"
+#include "struct.h"
 /*
 * Funckja do wczytywanie formatu OBJ z blendera do OpenGL'a za pomoc¹ funckji 'gl_drawArray'.
 * (Jeden model na plik!)

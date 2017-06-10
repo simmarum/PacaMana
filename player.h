@@ -9,7 +9,7 @@ public:
     Player(Map* &mapa,colision_length &colision_length);
     ~Player();
     void drawSolid(GLuint &tex,mat4 &V);
-    void colisionDetect(Map* &mapa,colision_length colision_table[]);
+    void WallDetect(Map* &mapa,colision_length colision_table[]);
 
     std::vector< float > TEMPvertices2;
     std::vector< float > TEMPuvs2;
