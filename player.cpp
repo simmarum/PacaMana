@@ -4,7 +4,6 @@
 #include "player.h"
 #include "loaderOBJ.h"
 
-
 #define mPlayer1 "modeleBlend/pacman1.obj"
 #define mPlayer2 "modeleBlend/pacman2.obj"
 

@@ -10,13 +10,13 @@ void rotateLEFT(float &speed) {
 void rotateRIGHT(float &speed) {
     speed=-PI/2;
 }
-void goSRTAIGHT(Player *player,Map* &mapa,colision_length colision_table[]) {
+void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[]) {
     player->position.x += cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x
     player->position.z -= sin(player->rotation.y)*player->speed*glfwGetTime(); // ruch z
     player->colisionDetect(mapa,colision_table); // wykrycie kolizji
 }
-void goBACK(Player *player) {
+void goBACK(Player *player, Map* &mapa, colision_length colision_table[]) {
     player->position.x -= cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x
     player->position.z += sin(player->rotation.y)*player->speed*glfwGetTime(); // ruch z
-    //player->colisionDetect(mapa,colision_table); // wykrycie kolizji
+    player->colisionDetect(mapa,colision_table); // wykrycie kolizji
 }
