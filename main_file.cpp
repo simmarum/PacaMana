@@ -1,20 +1,20 @@
 /*
 
-Niniejszy program jest wolnym oprogramowaniem; mo¿esz go
-rozprowadzaæ dalej i / lub modyfikowaæ na warunkach Powszechnej
-Licencji Publicznej GNU, wydanej przez Fundacjê Wolnego
-Oprogramowania - wed³ug wersji 2 tej Licencji lub(wed³ug twojego
-wyboru) którejœ z póŸniejszych wersji.
+Niniejszy program jest wolnym oprogramowaniem; moÂ¿esz go
+rozprowadzaÃ¦ dalej i / lub modyfikowaÃ¦ na warunkach Powszechnej
+Licencji Publicznej GNU, wydanej przez FundacjÃª Wolnego
+Oprogramowania - wedÂ³ug wersji 2 tej Licencji lub(wedÂ³ug twojego
+wyboru) ktÃ³rejÅ“ z pÃ³Å¸niejszych wersji.
 
-Niniejszy program rozpowszechniany jest z nadziej¹, i¿ bêdzie on
-u¿yteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyœlnej
-gwarancji PRZYDATNOŒCI HANDLOWEJ albo PRZYDATNOŒCI DO OKREŒLONYCH
-ZASTOSOWAÑ.W celu uzyskania bli¿szych informacji siêgnij do
+Niniejszy program rozpowszechniany jest z nadziejÂ¹, iÂ¿ bÃªdzie on
+uÂ¿yteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyÅ“lnej
+gwarancji PRZYDATNOÅ’CI HANDLOWEJ albo PRZYDATNOÅ’CI DO OKREÅ’LONYCH
+ZASTOSOWAÃ‘.W celu uzyskania bliÂ¿szych informacji siÃªgnij do
 Powszechnej Licencji Publicznej GNU.
 
-Z pewnoœci¹ wraz z niniejszym programem otrzyma³eœ te¿ egzemplarz
+Z pewnoÅ“ciÂ¹ wraz z niniejszym programem otrzymaÂ³eÅ“ teÂ¿ egzemplarz
 Powszechnej Licencji Publicznej GNU(GNU General Public License);
-jeœli nie - napisz do Free Software Foundation, Inc., 59 Temple
+jeÅ“li nie - napisz do Free Software Foundation, Inc., 59 Temple
 Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 */
 
@@ -86,6 +86,9 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #define klook_back  GLFW_KEY_J
 
+#define K_CAMERA_PACMAN GLFW_KEY_1
+#define K_CAMERA_UP GLFW_KEY_2
+
 #define KEY_SECOND true
 #define K_UP_SECOND GLFW_KEY_UP
 #define K_DOWN_SECOND GLFW_KEY_DOWN
@@ -93,20 +96,14 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define K_LEFT_SECOND GLFW_KEY_LEFT
 
 // asocjacja klawiszy z indeksami dla tablicy klawiszy...
-
 #define nop 0
-
 #define up  1
-
 #define down  2
-
 #define left  3
-
 #define right  4
-
 #define look_back 5
 
-
+bool CAMERA_PACMAN = true;
 
 using namespace glm;
 
@@ -121,18 +118,14 @@ colision_length colision_table[MAX_MODEL_ON_MAP];
 // potrzbne modele
 
 Floor *podloga = new Floor(colision_table[mFLOR]);
-
 Map *mapa = new Map(colision_table[mWALL]);
-
 Player *player = new Player(mapa,colision_table[mPMAN]);
 
 
 
+float aspect=1.0f; //Aktualny stosunek szerokoÅ“ci do wysokoÅ“ci okna
 
-
-float aspect=1.0f; //Aktualny stosunek szerokoœci do wysokoœci okna
-
-float speed_y=0; //Szybkoœæ k¹towa obrotu obiektu w radianach na sekundê wokó³ osi y
+float speed_y=0; //SzybkoÅ“Ã¦ kÂ¹towa obrotu obiektu w radianach na sekundÃª wokÃ³Â³ osi y
 
 float camera_far = 1.3; // odleglosc kamery (promiec okregu po ktorym porusza sie kamera wokol PacMana)
 
@@ -154,90 +147,49 @@ GLuint texPodloga;
 
 GLuint texPlayer;
 
-
-
-
-
-//Procedura obs³ugi b³êdów
-
+//Procedura obsÅ‚ugi bÅ‚Ä™dÃ³w
 void error_callback(int error, const char* description) {
-
     fputs(description, stderr);
-
 }
 
-
-
-//Procedura ob³ugi zmiany rozmiaru bufora ramki
-
+//Procedura obÅ‚ugi zmiany rozmiaru bufora ramki
 void windowResize(GLFWwindow* window, int width, int height) {
-
-    glViewport(0, 0, width, height); //Obraz ma byæ generowany w oknie o tej rozdzielczoœci
-
+    glViewport(0, 0, width, height); //Obraz ma byÄ‡ generowany w oknie o tej rozdzielczoÅ›ci
     ///(u nas ma byc staly!)
-
-    aspect=(float)szerokoscOkna/(float)wysokoscOkna; //Stosunek szerokoœci do wysokoœci okna
-
+    aspect=(float)szerokoscOkna/(float)wysokoscOkna; //Stosunek szerokoÅ›ci do wysokoÅ›ci okna
 }
-
-
 
 // funkcja ktora powoduje ruch w kazdym kierunku (po skosie dwa klawisze tez) ogolnie od klawiszy jest
-
 void doMove(Map* &mapa,colision_length colision_table[]) {
-
     if (keys[up]) goSRTAIGHT(player,mapa,colision_table); // do przodu
-
     if (keys[down]) goBACK(player); // do tylu
-
     if (!keys[right]) rotateSTOP(speed_y); // zatrzymanie obrotu w prawo
-
     if (!keys[left]) rotateSTOP(speed_y);// zatrzymanie oborotu w lewo
-
     if (keys[right]) rotateRIGHT(speed_y); // obrot w prawo
-
     if (keys[left]) rotateLEFT(speed_y); // obrot w lewo
 
-
-
     if (keys[left] && keys[up]) { // po skosie gora/lewo
-
         rotateLEFT(speed_y);
-
         goSRTAIGHT(player,mapa,colision_table);
-
     }
 
     if (keys[left] && keys[down]) { // po skosie dol/lewo
-
         rotateRIGHT(speed_y);
-
         goBACK(player);
-
     }
 
     if (keys[right] && keys[up]) { // po skosie gora/prawo
-
         rotateRIGHT(speed_y);
-
         goSRTAIGHT(player,mapa,colision_table);
-
     }
 
     if (keys[right] && keys[down]) { // po skosie dol/prawo
-
         rotateLEFT(speed_y);
-
         goBACK(player);
-
     }
-
 }
 
-
-
-//Procedura obs³ugi klawiatury
-
+//Procedura obsÅ‚ugi klawiatury
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
     if(action == GLFW_PRESS) {
@@ -247,6 +199,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if(key == kup) keys[up] = true;
         if(key == kdown) keys[down] = true;
         if(key == klook_back) keys[look_back] = true;
+
+        if(key == K_CAMERA_PACMAN) CAMERA_PACMAN = true;
+        if(key == K_CAMERA_UP) CAMERA_PACMAN = false;
 
         if(KEY_SECOND) {
             if(key == K_LEFT_SECOND) keys[left] = true;
@@ -259,11 +214,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     printf("PLAYER: X=%f Y=%f Z=%f\n",player->position.x,player->position.y,player->position.z);
 
     if (action == GLFW_RELEASE) {
-        if(key == kleft) keys[left]=false;
-        if(key == kright) keys[right]=false;
-        if(key == kup) keys[up]=false;
-        if(key == kdown) keys[down]=false;
-        if(key == klook_back) keys[look_back]=false;
+        if(key == kleft) keys[left] = false;
+        if(key == kright) keys[right] = false;
+        if(key == kup) keys[up] = false;
+        if(key == kdown) keys[down] = false;
+        if(key == klook_back) keys[look_back] = false;
 
         if(KEY_SECOND) {
             if(key == K_LEFT_SECOND) keys[left] = false;
@@ -278,54 +233,30 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void LetItBeLight() {
 
     GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f }; // otoczenia
-
     GLfloat diffuseLight[] = { 0.4f, 0.4f, 0.4, 1.0f }; // rozproszenia
-
     GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f }; // odbicia
-
     GLfloat position0[] = { 2.0f, 2.0f, -2.0f, 1.0f }; // pozycja za pacmanem po prawej
-
     GLfloat position1[] = { -2.0, 2.0f, -2.0f, 1.0f }; // pozycja za pacmanem po lewej
 
-
-
     //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
-
     glEnable(GL_LIGHTING);
-
-
-
     glEnable(GL_LIGHT0);
-
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-
     glLightfv(GL_LIGHT0, GL_POSITION, position0);
-
-
-
     glEnable(GL_LIGHT1);
-
     glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
-
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
-
     glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
-
     glLightfv(GL_LIGHT1, GL_POSITION, position1);
-
 }
-
-
 
 void wczytajObraz(GLuint &tex, std::string path) {
 
     std::vector<unsigned char> image; //Alokuj wektor do wczytania obrazka
 
-    unsigned width, height; //Zmienne do których wczytamy wymiary obrazka
+    unsigned width, height; //Zmienne do ktÃ³rych wczytamy wymiary obrazka
 
     unsigned error = lodepng::decode(image, width, height, path);
 
@@ -339,13 +270,13 @@ void wczytajObraz(GLuint &tex, std::string path) {
 
 
 
-    //Import do pamiêci karty graficznej
+    //Import do pamiÃªci karty graficznej
 
     glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
 
     glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
 
-    //Wczytaj obrazek do pamiêci KG skojarzonej z uchwytem
+    //Wczytaj obrazek do pamiÃªci KG skojarzonej z uchwytem
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
 
@@ -365,15 +296,15 @@ void wczytajObraz(GLuint &tex, std::string path) {
 
 
 
-//Procedura inicjuj¹ca
+//Procedura inicjujÂ¹ca
 
 void initOpenGLProgram(GLFWwindow* window) {
 
-    //************Tutaj umieszczaj kod, który nale¿y wykonaæ raz, na pocz¹tku programu************
+    //************Tutaj umieszczaj kod, ktÃ³ry naleÂ¿y wykonaÃ¦ raz, na poczÂ¹tku programu************
 
-    glfwSetFramebufferSizeCallback(window, windowResize); //Zarejestruj procedurê obs³ugi zmiany rozdzielczoœci bufora ramki
+    glfwSetFramebufferSizeCallback(window, windowResize); //Zarejestruj procedurÃª obsÂ³ugi zmiany rozdzielczoÅ“ci bufora ramki
 
-    glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurê obs³ugi klawiatury
+    glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurÃª obsÂ³ugi klawiatury
 
 
 
@@ -381,7 +312,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 
     glEnable(GL_COLOR_MATERIAL); // wlaczenie kolorow w opengl
 
-    glEnable(GL_DEPTH_TEST); //W³¹cz u¿ywanie budora g³êbokoœci
+    glEnable(GL_DEPTH_TEST); //WÂ³Â¹cz uÂ¿ywanie budora gÂ³ÃªbokoÅ“ci
 
 
 
@@ -407,82 +338,54 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 
 
-//Procedura rysuj¹ca zawartoœæ sceny
+//Procedura rysujÂ¹ca zawartoÅ“Ã¦ sceny
 
 void drawScene(GLFWwindow* window) {
-
-    //************Tutaj umieszczaj kod rysuj¹cy obraz******************l
-
-
-
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wyczyœæ bufor kolorów (czyli przygotuj "p³ótno" do rysowania)
-
-
+    //************Tutaj umieszczaj kod rysujÂ¹cy obraz******************l
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //WyczyÅ“Ã¦ bufor kolorÃ³w (czyli przygotuj "pÂ³Ã³tno" do rysowania)
 
     //***Przygotowanie do rysowania****
-
     mat4 P=perspective(35.0f*PI/180.0f,aspect,1.0f,30.0f); //Wylicz macierz rzutowania P
-
     mat4 V; // macierz widoku
 
-    if(!keys[look_back]) { /// widok do przodu
-
+    if(CAMERA_PACMAN && !keys[look_back]) { /// widok do przodu
         V=lookAt( //Wylicz macierz widoku
-
               vec3(player->position.x-camera_far*cos(player->rotation.y),
-
                    player->position.y+camera_angle,
-
                    player->position.z+camera_far*sin(player->rotation.y)),
-
               vec3(player->position.x+camera_far*cos(player->rotation.y),
-
                    player->position.y+0.3,
-
                    player->position.z-camera_far*sin(player->rotation.y)),
-
               vec3(0.0f,1.0f,0.0f));
-
-    } else { /// widok do tylu
-
-        V=lookAt( //Wylicz macierz widoku
-
+    } else if(!CAMERA_PACMAN) { /// widok z gÃ³ry
+        V=lookAt(
+              vec3(player->position.x - camera_far*cos(player->rotation.y),
+                   player->position.y + 10,
+                   player->position.z + camera_far*sin(player->rotation.y)),
+              vec3(player->position.x,
+                   player->position.y,
+                   player->position.z),
+              vec3(0.0f,1.0f,0.0f));
+    } else { /// widok do tyÅ‚u
+            V=lookAt( //Wylicz macierz widoku
               vec3(player->position.x+camera_far*cos(player->rotation.y),
-
                    player->position.y+camera_angle,
-
                    player->position.z-camera_far*sin(player->rotation.y)),
-
               vec3(player->position.x-camera_far*cos(player->rotation.y),
-
                    player->position.y+0.3,
-
                    player->position.z+camera_far*sin(player->rotation.y)),
-
               vec3(0.0f,1.0f,0.0f));
-
     }
 
-    glMatrixMode(GL_PROJECTION); //W³¹cz tryb modyfikacji macierzy rzutowania
-
-    glLoadMatrixf(value_ptr(P)); //Za³aduj macierz rzutowania
-
-    glMatrixMode(GL_MODELVIEW);  //W³¹cz tryb modyfikacji macierzy model-widok
-
-
+    glMatrixMode(GL_PROJECTION); //WÂ³Â¹cz tryb modyfikacji macierzy rzutowania
+    glLoadMatrixf(value_ptr(P)); //ZaÂ³aduj macierz rzutowania
+    glMatrixMode(GL_MODELVIEW);  //WÂ³Â¹cz tryb modyfikacji macierzy model-widok
 
     podloga->drawSolid(texPodloga,V);
-
     mapa->drawSolid(texSciana,V);
-
     player->drawSolid(texPlayer,V);
 
-
-
-
-
-    glfwSwapBuffers(window); //Przerzuæ tylny bufor na przedni
-
+    glfwSwapBuffers(window); //PrzerzuÃ¦ tylny bufor na przedni
 }
 
 
@@ -507,17 +410,17 @@ int main(void) {
 
 
 
-    GLFWwindow* window; //WskaŸnik na obiekt reprezentuj¹cy okno
+    GLFWwindow* window; //WskaÅ¸nik na obiekt reprezentujÂ¹cy okno
 
 
 
-    glfwSetErrorCallback(error_callback);//Zarejestruj procedurê obs³ugi b³êdów
+    glfwSetErrorCallback(error_callback);//Zarejestruj procedurÃª obsÂ³ugi bÂ³ÃªdÃ³w
 
 
 
-    if (!glfwInit()) { //Zainicjuj bibliotekê GLFW
+    if (!glfwInit()) { //Zainicjuj bibliotekÃª GLFW
 
-        fprintf(stderr, "Nie mo¿na zainicjowaæ GLFW.\n");
+        fprintf(stderr, "Nie moÂ¿na zainicjowaÃ¦ GLFW.\n");
 
         exit(EXIT_FAILURE);
 
@@ -525,11 +428,11 @@ int main(void) {
 
 
 
-    window = glfwCreateWindow(szerokoscOkna, wysokoscOkna, "Paca-Mana", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+    window = glfwCreateWindow(szerokoscOkna, wysokoscOkna, "Paca-Mana", NULL, NULL);  //UtwÃ³rz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
 
 
-    if (!window) { //Je¿eli okna nie uda³o siê utworzyæ, to zamknij program
+    if (!window) { //JeÂ¿eli okna nie udaÂ³o siÃª utworzyÃ¦, to zamknij program
 
         glfwTerminate();
 
@@ -539,17 +442,17 @@ int main(void) {
 
 
 
-    glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje siê aktywny i polecenia OpenGL bêd¹ dotyczyæ w³aœnie jego.
+    glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje siÃª aktywny i polecenia OpenGL bÃªdÂ¹ dotyczyÃ¦ wÂ³aÅ“nie jego.
 
-    glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
+    glfwSwapInterval(1); //Czekaj na 1 powrÃ³t plamki przed pokazaniem ukrytego bufora
 
 
 
     GLenum err;
 
-    if ((err=glewInit()) != GLEW_OK) { //Zainicjuj bibliotekê GLEW
+    if ((err=glewInit()) != GLEW_OK) { //Zainicjuj bibliotekÃª GLEW
 
-        fprintf(stderr, "Nie mo¿na zainicjowaæ GLEW: %s\n", glewGetErrorString(err));
+        fprintf(stderr, "Nie moÂ¿na zainicjowaÃ¦ GLEW: %s\n", glewGetErrorString(err));
 
         exit(EXIT_FAILURE);
 
@@ -557,7 +460,7 @@ int main(void) {
 
 
 
-    initOpenGLProgram(window); //Operacje inicjuj¹ce
+    initOpenGLProgram(window); //Operacje inicjujÂ¹ce
 
 
 
@@ -565,19 +468,19 @@ int main(void) {
 
 
 
-    //G³ówna pêtla
+    //GÂ³Ã³wna pÃªtla
 
-    while (!glfwWindowShouldClose(window)) { //Tak d³ugo jak okno nie powinno zostaæ zamkniête
+    while (!glfwWindowShouldClose(window)) { //Tak dÂ³ugo jak okno nie powinno zostaÃ¦ zamkniÃªte
 
         doMove(mapa,colision_table);
 
-        player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost k¹ta obrotu i zwiêksz aktualny k¹t
+        player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost kÂ¹ta obrotu i zwiÃªksz aktualny kÂ¹t
 
         glfwSetTime(0); //Wyzeruj timer
 
-        drawScene(window); //Wykonaj procedurê rysuj¹c¹
+        drawScene(window); //Wykonaj procedurÃª rysujÂ¹cÂ¹
 
-        glfwPollEvents(); //Wykonaj procedury callback w zaleznoœci od zdarzeñ jakie zasz³y.
+        glfwPollEvents(); //Wykonaj procedury callback w zaleznoÅ“ci od zdarzeÃ± jakie zaszÂ³y.
 
     }
 
@@ -589,7 +492,7 @@ int main(void) {
 
 
 
-    //Usuniêcie tekstury z pamiêci karty graficznej – po g³ownej pêtli
+    //UsuniÃªcie tekstury z pamiÃªci karty graficznej â€“ po gÂ³ownej pÃªtli
 
     glDeleteTextures(1,&texSciana);
 
@@ -597,9 +500,9 @@ int main(void) {
 
     glDeleteTextures(1,&texPlayer);
 
-    glfwDestroyWindow(window); //Usuñ kontekst OpenGL i okno
+    glfwDestroyWindow(window); //UsuÃ± kontekst OpenGL i okno
 
-    glfwTerminate(); //Zwolnij zasoby zajête przez GLFW
+    glfwTerminate(); //Zwolnij zasoby zajÃªte przez GLFW
 
     exit(EXIT_SUCCESS);
 
