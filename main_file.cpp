@@ -161,8 +161,8 @@ void windowResize(GLFWwindow* window, int width, int height) {
 
 // funkcja ktora powoduje ruch w kazdym kierunku (po skosie dwa klawisze tez) ogolnie od klawiszy jest
 void doMove(Map* &mapa,colision_length colision_table[]) {
-    if (keys[up]) goSRTAIGHT(player,mapa,colision_table); // do przodu
-    if (keys[down]) goBACK(player); // do tylu
+    if (keys[up]) goSTRAIGHT(player,mapa,colision_table); // do przodu
+    if (keys[down]) goBACK(player, mapa, colision_table); // do tylu
     if (!keys[right]) rotateSTOP(speed_y); // zatrzymanie obrotu w prawo
     if (!keys[left]) rotateSTOP(speed_y);// zatrzymanie oborotu w lewo
     if (keys[right]) rotateRIGHT(speed_y); // obrot w prawo
@@ -170,22 +170,22 @@ void doMove(Map* &mapa,colision_length colision_table[]) {
 
     if (keys[left] && keys[up]) { // po skosie gora/lewo
         rotateLEFT(speed_y);
-        goSRTAIGHT(player,mapa,colision_table);
+        goSTRAIGHT(player,mapa,colision_table);
     }
 
     if (keys[left] && keys[down]) { // po skosie dol/lewo
         rotateRIGHT(speed_y);
-        goBACK(player);
+        goBACK(player, mapa, colision_table);
     }
 
     if (keys[right] && keys[up]) { // po skosie gora/prawo
         rotateRIGHT(speed_y);
-        goSRTAIGHT(player,mapa,colision_table);
+        goSTRAIGHT(player,mapa,colision_table);
     }
 
     if (keys[right] && keys[down]) { // po skosie dol/prawo
         rotateLEFT(speed_y);
-        goBACK(player);
+        goBACK(player, mapa, colision_table);
     }
 }
 
@@ -472,7 +472,7 @@ int main(void) {
 
     while (!glfwWindowShouldClose(window)) { //Tak d³ugo jak okno nie powinno zostaæ zamkniête
 
-        doMove(mapa,colision_table);
+        doMove(mapa, colision_table);
 
         player->rotation.y+=speed_y*glfwGetTime(); //Oblicz przyrost k¹ta obrotu i zwiêksz aktualny k¹t
 

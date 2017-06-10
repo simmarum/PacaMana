@@ -1,14 +1,8 @@
 #ifndef MAP_H_INCLUDED
-
 #define MAP_H_INCLUDED
 
-
-
 #include "wall.h"
-
 #include "constants.h"
-
-
 
 class Map {
 
@@ -39,7 +33,7 @@ public:
         { mWALL, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL},
         { mWALL, mFLOR, mWALL, mWALL, mWALL, mFLOR, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL},
         { mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mWALL, mWALL},
-        { mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mWALL, mWALL, mFLOR, mWALL, mWALL, mFLOR, mWALL, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL},
+        { mWALL, mFLOR, mCOIN, mFLOR, mWALL, mFLOR, mWALL, mWALL, mWALL, mFLOR, mWALL, mWALL, mFLOR, mWALL, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL},
         { mWALL, mFLOR, mPMAN, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mWALL},
         { mWALL, mFLOR, mFLOR, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mFLOR, mFLOR, mWALL, mFLOR, mWALL},
         { mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL, mWALL}
@@ -50,7 +44,4 @@ private:
     Wall *wall;
 };
 
-
-
 #endif // MAP_H_INCLUDED
-

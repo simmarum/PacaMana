@@ -3,11 +3,10 @@
 
 #include "player.h"
 
-
 void rotateSTOP(float &speed);
 void rotateLEFT(float &speed);
 void rotateRIGHT(float &speed);
-void goSRTAIGHT(Player *player,Map* &mapa,colision_length colision_table[]);
-void goBACK(Player *player);
+void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[]);
+void goBACK(Player *player, Map* &mapa, colision_length colision_table[]);
 
 #endif // MOVE_H_INCLUDED
