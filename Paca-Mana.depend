@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1496512591 source:c:\users\user\desktop\projekty\studia\pacamana\lodepng.cpp
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\lodepng.cpp
 	"lodepng.h"
 	<stdio.h>
 	<stdlib.h>
 	<fstream>
 
-1496512591 c:\users\user\desktop\projekty\studia\pacamana\lodepng.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\lodepng.h
 	<string.h>
 	<vector>
 	<string>
@@ -13,11 +13,17 @@
 	<iostream>
 	"lodepng.h"
 
-1496520884 source:c:\users\user\desktop\projekty\studia\pacamana\loaderobj.cpp
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\loaderobj.cpp
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<limits>
 	<string>
 	"loaderOBJ.h"
 
-1496512644 c:\users\user\desktop\projekty\studia\pacamana\loaderobj.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\loaderobj.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -26,6 +32,7 @@
 	<stdlib.h>
 	<stdio.h>
 	<vector>
+	"struct_cosilion.h"
 
 1496512592 c:\users\user\desktop\projekty\studia\pacamana\glew\include\gl\glew.h
 	<stddef.h>
@@ -558,7 +565,7 @@
 	"../trigonometric.hpp"
 	"../matrix.hpp"
 
-1496525322 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
+1497092562 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -567,22 +574,26 @@
 	<stdlib.h>
 	<stdio.h>
 	<lodepng.h>
+	<string>
 	"constants.h"
+	"struct_cosilion.h"
 	"allmodels.h"
+	"move.h"
 	"loaderOBJ.h"
 	<string>
 
-1496524313 c:\users\user\desktop\projekty\studia\pacamana\constants.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\constants.h
 
-1496523509 c:\users\user\desktop\projekty\studia\pacamana\allmodels.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\allmodels.h
 	"wall.h"
 	"floor.h"
+	"player.h"
 	"map.h"
 
-1496520922 c:\users\user\desktop\projekty\studia\pacamana\wall.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\wall.h
 	"model.h"
 
-1496520907 c:\users\user\desktop\projekty\studia\pacamana\model.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\model.h
 	<vector>
 	<GL/glew.h>
 	<GLFW/glfw3.h>
@@ -590,33 +601,55 @@
 	<glm/gtc/type_ptr.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	"constants.h"
+	"struct_cosilion.h"
 
-1496520807 c:\users\user\desktop\projekty\studia\pacamana\floor.h
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\floor.h
 	"model.h"
 
-1496520900 source:c:\users\user\desktop\projekty\studia\pacamana\model.cpp
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\model.cpp
 	"model.h"
 
-1496520911 source:c:\users\user\desktop\projekty\studia\pacamana\wall.cpp
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\wall.cpp
 	<stdio.h>
 	<cstdlib>
 	"wall.h"
 	"loaderOBJ.h"
 
-1496520807 source:c:\users\user\desktop\projekty\studia\pacamana\floor.cpp
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\floor.cpp
 	<stdio.h>
 	<cstdlib>
+	"constants.h"
 	"floor.h"
 	"loaderOBJ.h"
 
-1496525465 c:\users\user\desktop\projekty\studia\pacamana\map.h
-	"model.h"
+1497092768 c:\users\user\desktop\projekty\studia\pacamana\map.h
+	"wall.h"
 	"constants.h"
 
-1496525333 source:c:\users\user\desktop\projekty\studia\pacamana\map.cpp
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\map.cpp
 	<stdlib.h>
 	<stdio.h>
 	<iostream>
 	<cstdlib>
 	"map.h"
+	"wall.h"
+
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\struct_cosilion.h
+
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\player.h
+	"model.h"
+	"map.h"
+
+1497092507 c:\users\user\desktop\projekty\studia\pacamana\move.h
+	"player.h"
+
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\move.cpp
+	<stdio.h>
+	<move.h>
+
+1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\player.cpp
+	<stdio.h>
+	<cstdlib>
+	"player.h"
+	"loaderOBJ.h"
 

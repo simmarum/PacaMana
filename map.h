@@ -9,7 +9,7 @@ public:
     Map(colision_length &colision_length);
     ~Map();
     void drawSolid(GLuint &texWall, mat4 &V);
-    void drawMapInConsole();
+    void drawMapInConsole(bool simple);
     std::vector< float > TEMPvertices;
     std::vector< float > TEMPuvs;
     std::vector< float > TEMPnormals;
