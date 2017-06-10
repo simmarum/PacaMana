@@ -30,3 +30,6 @@ Thumbs.db
 
 # Folder config file  
 Desktop.ini
+
+[Bb]in/*
+[Bb]in/Debug/*
