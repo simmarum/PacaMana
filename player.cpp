@@ -4,7 +4,6 @@
 #include "player.h"
 #include "loaderOBJ.h"
 
-
 #define mPlayer "modeleBlend/pacman.obj"
 
 using namespace glm;

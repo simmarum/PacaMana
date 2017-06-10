@@ -565,7 +565,7 @@
 	"../trigonometric.hpp"
 	"../matrix.hpp"
 
-1497104804 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
+1497110538 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -584,10 +584,11 @@
 
 1497104532 c:\users\user\desktop\projekty\studia\pacamana\constants.h
 
-1497092507 c:\users\user\desktop\projekty\studia\pacamana\allmodels.h
+1497109900 c:\users\user\desktop\projekty\studia\pacamana\allmodels.h
 	"wall.h"
 	"floor.h"
 	"player.h"
+	"coin.h"
 	"map.h"
 
 1497092507 c:\users\user\desktop\projekty\studia\pacamana\wall.h
@@ -647,9 +648,19 @@
 	<stdio.h>
 	<move.h>
 
-1497092507 source:c:\users\user\desktop\projekty\studia\pacamana\player.cpp
+1497109444 source:c:\users\user\desktop\projekty\studia\pacamana\player.cpp
 	<stdio.h>
 	<cstdlib>
 	"player.h"
 	"loaderOBJ.h"
+
+1497111119 source:c:\users\user\desktop\projekty\studia\pacamana\coin.cpp
+	<stdio.h>
+	<cstdlib>
+	"coin.h"
+	"loaderOBJ.h"
+
+1497109727 c:\users\user\desktop\projekty\studia\pacamana\coin.h
+	"model.h"
+	"map.h"
 

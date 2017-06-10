@@ -18,72 +18,40 @@ jeœli nie - napisz do Free Software Foundation, Inc., 59 Temple
 Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 */
 
-
-
 #define GLM_FORCE_RADIANS
 
-
-
 #include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
-
 #include <glm/gtc/type_ptr.hpp>
-
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <stdlib.h>
-
 #include <stdio.h>
-
 #include <lodepng.h>
-
 #include <string>
-
 #include "constants.h"
-
 #include "struct_cosilion.h"
-
 #include "allmodels.h"
 
-
-
 #include "move.h"
-
 #include "loaderOBJ.h"
-
 #include <string>
 
-
-
 #define szerokoscOkna 500
-
 #define wysokoscOkna 500
 
-
-
 // tekstury dla obiektow
-
 #define twall "tekstury/wood.png"
-
 #define tfloor "tekstury/floor.png"
-
 #define tplayer "tekstury/pacman.png"
-
-
+#define tcoin "tekstury/coin.png"
 
 // definicja klawiszy (latwa zmiana sterowania w kodzie)
 
 #define kup  GLFW_KEY_W
-
 #define kdown  GLFW_KEY_S
-
 #define kleft  GLFW_KEY_A
-
 #define kright  GLFW_KEY_D
-
 #define klook_back  GLFW_KEY_J
 
 #define K_CAMERA_PACMAN GLFW_KEY_1
@@ -110,18 +78,13 @@ using namespace glm;
 
 
 // tablica kolizji (aby nie trzymiac wymiarow w poszczegolnych obiektach tylko ogolnie dla danego typu obiektu
-
 colision_length colision_table[MAX_MODEL_ON_MAP];
 
-
-
 // potrzbne modele
-
 Floor *podloga = new Floor(colision_table[mFLOR]);
 Map *mapa = new Map(colision_table[mWALL]);
-Player *player = new Player(mapa,colision_table[mPMAN]);
-
-
+Player *player = new Player(mapa, colision_table[mPMAN]);
+Coin *coin = new Coin(mapa, colision_table[mCOIN]);
 
 float aspect=1.0f; //Aktualny stosunek szerokoœci do wysokoœci okna
 
@@ -142,10 +105,9 @@ bool keys[32];
 // definicja uchwytow na tekstury
 
 GLuint texSciana;
-
 GLuint texPodloga;
-
 GLuint texPlayer;
+GLuint texCoin;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -332,7 +294,8 @@ void initOpenGLProgram(GLFWwindow* window) {
 
     wczytajObraz(texPlayer,tplayer);
 
-
+    /// -> Wczytaj obrazek - coin
+    wczytajObraz(texCoin, tcoin);
 
 }
 
@@ -384,6 +347,7 @@ void drawScene(GLFWwindow* window) {
     podloga->drawSolid(texPodloga,V);
     mapa->drawSolid(texSciana,V);
     player->drawSolid(texPlayer,V);
+    coin->drawSolid(texCoin,V);
 
     glfwSwapBuffers(window); //Przerzuæ tylny bufor na przedni
 }
@@ -493,12 +457,10 @@ int main(void) {
 
 
     //Usuniêcie tekstury z pamiêci karty graficznej – po g³ownej pêtli
-
     glDeleteTextures(1,&texSciana);
-
     glDeleteTextures(1,&texPodloga);
-
     glDeleteTextures(1,&texPlayer);
+    glDeleteTextures(1,&texCoin);
 
     glfwDestroyWindow(window); //Usuñ kontekst OpenGL i okno
 
