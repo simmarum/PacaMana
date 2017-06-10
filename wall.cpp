@@ -39,6 +39,7 @@ void Wall::drawSolid(GLuint &tex,mat4 &V) {
     M=translate(M,this->position);
     M=rotate(M,this->rotation.x,vec3(1.0,0.0,0.0));
     M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
+    M=glm::scale(M,this->scale);
     glLoadMatrixf(value_ptr(V*M));
 
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));

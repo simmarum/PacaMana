@@ -121,6 +121,22 @@ void Player::drawSolid_2(GLuint &tex,mat4 &V) {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+void Player::CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
+    for(int i=0; i<coin_position.size(); i++) {
+            float cX = coin_position[i].x;
+            float cZ = coin_position[i].z;
+            float pX = this->position.x;
+            float pZ = this->position.z;
+            if(sqrt(fabs(cX-pX)*fabs(cX-pX)+fabs(cZ-pZ)*fabs(cZ-pZ)) < colision_table[mPMAN].toX + colision_table[mCOIN].toX){
+                printf("Zdobyles pieniazka ; )\n");
+                coin_position.erase(coin_position.begin()+i);
+                printf("Pozostalo jeszcze: %d\n",coin_position.size());
+                break;
+            }
+    }
+}
+
+
 void Player::WallDetect(Map* &mapa,colision_length colision_table[]) {
     /*
         SCHEMAT DETEKCJI SCIAN

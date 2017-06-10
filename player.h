@@ -10,6 +10,7 @@ public:
     ~Player();
     void drawSolid(GLuint &tex,mat4 &V);
     void WallDetect(Map* &mapa,colision_length colision_table[]);
+    void CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position);
 
     std::vector< float > TEMPvertices2;
     std::vector< float > TEMPuvs2;

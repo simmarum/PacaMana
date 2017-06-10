@@ -31,20 +31,20 @@ void Map::drawMapInConsole(bool simple) {
         for(int col = 0; col < SZEROKOSC_MAPY; col++) {
             if(simple) {
                 switch(mapa[row][col]) {
-                case 4: {
-                    printf(" X ");
+                case mFLOR: {
+                    printf("   ");
                     break;
-                } case 2: {
-                    printf(" B ");
+                } case mPMAN: {
+                    printf(" P ");
                     break;
-                } case 1: {
+                } case mWALL: {
                     printf(" # ");
                     break;
-                } case 3: {
-                    printf(" # ");
+                } case mCOIN: {
+                    printf(" O ");
                     break;
                 } default: {
-                    printf("   ");
+                    printf(" ? ");
                     break;
                 }
                 }
@@ -52,6 +52,7 @@ void Map::drawMapInConsole(bool simple) {
                 printf(" %d ", mapa[row][col]);
             }
         }
+        printf("\n");
     }
 }
 

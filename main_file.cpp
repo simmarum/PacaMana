@@ -45,6 +45,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define tfloor "tekstury/floor.png"
 #define tplayer "tekstury/pacman.png"
 #define tcoin "tekstury/coin.png"
+#define tworld "tekstury/world.png"
 
 // definicja klawiszy (latwa zmiana sterowania w kodzie)
 
@@ -81,6 +82,8 @@ using namespace glm;
 colision_length colision_table[MAX_MODEL_ON_MAP];
 std::vector <glm::vec3> coin_position;
 // potrzbne modele
+struct colision_length unvalue;
+Wall *world = new Wall(unvalue);
 Floor *podloga = new Floor(colision_table[mFLOR]);
 Map *mapa = new Map(colision_table[mWALL],coin_position);
 Player *player = new Player(mapa, colision_table[mPMAN]);
@@ -99,6 +102,7 @@ GLuint texSciana;
 GLuint texPodloga;
 GLuint texPlayer;
 GLuint texCoin;
+GLuint texWorld;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -113,28 +117,28 @@ void windowResize(GLFWwindow* window, int width, int height) {
 }
 
 // funkcja ktora powoduje ruch w kazdym kierunku (po skosie dwa klawisze tez) ogolnie od klawiszy jest
-void doMove(Map* &mapa,colision_length colision_table[]) {
-    if(keys[up]) goSTRAIGHT(player,mapa,colision_table);  // do przodu
-    if(keys[down]) goBACK(player, mapa, colision_table);  // do tylu
+void doMove(Map* &mapa,colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
+    if(keys[up]) goSTRAIGHT(player,mapa,colision_table,coin_position);  // do przodu
+    if(keys[down]) goBACK(player, mapa, colision_table,coin_position);  // do tylu
     if(!keys[right]) rotateSTOP(speed_y);  // zatrzymanie obrotu w prawo
     if(!keys[left]) rotateSTOP(speed_y); // zatrzymanie oborotu w lewo
     if(keys[right]) rotateRIGHT(speed_y);  // obrot w prawo
     if(keys[left]) rotateLEFT(speed_y);  // obrot w lewo
     if(keys[left] && keys[up]) {  // po skosie gora/lewo
         rotateLEFT(speed_y);
-        goSTRAIGHT(player,mapa,colision_table);
+        goSTRAIGHT(player,mapa,colision_table,coin_position);
     }
     if(keys[left] && keys[down]) {  // po skosie dol/lewo
         rotateRIGHT(speed_y);
-        goBACK(player, mapa, colision_table);
+        goBACK(player, mapa, colision_table,coin_position);
     }
     if(keys[right] && keys[up]) {  // po skosie gora/prawo
         rotateRIGHT(speed_y);
-        goSTRAIGHT(player,mapa,colision_table);
+        goSTRAIGHT(player,mapa,colision_table,coin_position);
     }
     if(keys[right] && keys[down]) {  // po skosie dol/prawo
         rotateLEFT(speed_y);
-        goBACK(player, mapa, colision_table);
+        goBACK(player, mapa, colision_table,coin_position);
     }
 }
 
@@ -220,6 +224,8 @@ void initOpenGLProgram(GLFWwindow* window) {
     LetItBeLight(); // swiatlo
     glEnable(GL_COLOR_MATERIAL); // wlaczenie kolorow w opengl
     glEnable(GL_DEPTH_TEST); //W³¹cz u¿ywanie budora g³êbokoœci
+     /// -> Wczytaj obrazek - world
+    wczytajObraz(texWorld, tworld);
     /// - > Wczytaj obrazek - sciana
     wczytajObraz(texSciana,twall);
     /// - > Wczytaj obrazek - podloga
@@ -228,6 +234,9 @@ void initOpenGLProgram(GLFWwindow* window) {
     wczytajObraz(texPlayer,tplayer);
     /// -> Wczytaj obrazek - coin
     wczytajObraz(texCoin, tcoin);
+    /// ustawienie pozycji swiata? (gwiazd)
+    world->position = vec3(SZEROKOSC_MAPY/2,0.0,WYSOKOSC_MAPY/2);
+    world->scale = vec3(40.0,40.0,40.0);
 }
 
 //Procedura rysuj¹ca zawartoœæ sceny
@@ -235,7 +244,7 @@ void drawScene(GLFWwindow* window) {
     //************Tutaj umieszczaj kod rysuj¹cy obraz******************l
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wyczyœæ bufor kolorów (czyli przygotuj "p³ótno" do rysowania)
     //***Przygotowanie do rysowania****
-    mat4 P=perspective(35.0f*PI/180.0f,aspect,1.0f,30.0f); //Wylicz macierz rzutowania P
+    mat4 P=perspective(35.0f*PI/180.0f,aspect,1.0f,50.0f); //Wylicz macierz rzutowania P
     mat4 V; // macierz widoku
     if(CAMERA_PACMAN && !keys[look_back]) { /// widok do przodu
         V=lookAt( //Wylicz macierz widoku
@@ -268,6 +277,8 @@ void drawScene(GLFWwindow* window) {
     glMatrixMode(GL_PROJECTION); //W³¹cz tryb modyfikacji macierzy rzutowania
     glLoadMatrixf(value_ptr(P)); //Za³aduj macierz rzutowania
     glMatrixMode(GL_MODELVIEW);  //W³¹cz tryb modyfikacji macierzy model-widok
+    /// Rysowanie
+    world->drawSolid(texWorld,V);
     podloga->drawSolid(texPodloga,V);
     mapa->drawSolid(texSciana,V);
     player->drawSolid(texPlayer,V);
@@ -281,6 +292,7 @@ void usunObiekty() {
     delete mapa;
     delete podloga;
     delete coin;
+    delete world;
 }
 
 int main(void) {
@@ -307,7 +319,7 @@ int main(void) {
     glfwSetTime(0); //Wyzeruj timer
     //G³ówna pêtla
     while(!glfwWindowShouldClose(window)) {  //Tak d³ugo jak okno nie powinno zostaæ zamkniête
-        doMove(mapa, colision_table);
+        doMove(mapa, colision_table,coin_position);
         player->rotation.y+=speed_y*glfwGetTime() - (float)2*PI*(floor(speed_y*glfwGetTime()/(2*PI))); //Oblicz przyrost k¹ta obrotu i zwiêksz aktualny k¹t
         glfwSetTime(0); //Wyzeruj timer
         drawScene(window); //Wykonaj procedurê rysuj¹c¹
@@ -320,6 +332,7 @@ int main(void) {
     glDeleteTextures(1,&texPodloga);
     glDeleteTextures(1,&texPlayer);
     glDeleteTextures(1,&texCoin);
+    glDeleteTextures(1,&texWorld);
     glfwDestroyWindow(window); //Usuñ kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajête przez GLFW
     exit(EXIT_SUCCESS);
