@@ -40,12 +40,12 @@
 * -> float* wierzcholki = &out_vertices[0];
 */
 
-bool loadOBJ( const char * path,
-              std::vector < float > & out_vertices,
-              std::vector < float > & out_uvs,
-              std::vector < float > & out_normals,
-              unsigned int &vCount,
-              colision_length &colision_length
+bool loadOBJ(const char * path,
+             std::vector < float > & out_vertices,
+             std::vector < float > & out_uvs,
+             std::vector < float > & out_normals,
+             unsigned int &vCount,
+             colision_length &colision_length
             );
 void wypiszvector(std::vector <float> name,char c[],int modulo);
 

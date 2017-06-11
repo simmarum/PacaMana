@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <move.h>
 
-void rotateSTOP(float &speed) {
-    speed=0.0;
+void rotateLEFT(Player *player) {
+    player->rotation.y+=player->rotation_speed*glfwGetTime() - (float)2*PI*(floor(player->rotation_speed*glfwGetTime()/(2*PI))); //Oblicz przyrost k¹ta obrotu i zwiêksz aktualny k¹t
 }
-void rotateLEFT(float &speed) {
-    speed=PI/2;
-}
-void rotateRIGHT(float &speed) {
-    speed=-PI/2;
+void rotateRIGHT(Player *player) {
+    player->rotation.y+=(-player->rotation_speed)*glfwGetTime() - (float)2*PI*(floor((-player->rotation_speed)*glfwGetTime()/(2*PI))); //Oblicz przyrost k¹ta obrotu i zwiêksz aktualny k¹t
 }
 void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
     player->position.x += cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x

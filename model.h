@@ -42,9 +42,10 @@ public:
     vec3 rotation;
     vec3 scale;
     float speed;
-
+    virtual ~Model(){};
     virtual void drawSolid(GLuint &tex,mat4 &V)=0;
     virtual void drawWire(GLuint &tex,mat4 &V);
+
 };
 
 #endif

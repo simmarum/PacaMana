@@ -13,11 +13,11 @@ using namespace glm;
 Map::Map(colision_length &colision_length,std::vector <glm::vec3> &coin_position) {
     for(int i=0; i<WYSOKOSC_MAPY; i++) {
         for(int j=0; j<SZEROKOSC_MAPY; j++) {
-            if(mapa[i][j]>=MAX_MODEL_ON_MAP){
-                printf("Na mapie sa nie znane wartosci!\nX: %d Y:%d\nWartosc: %d",i,j,mapa[i][j]);
+            if(mapa[i][j]>=MAX_MODEL_ON_MAP) {
+                fprintf(stderr,"Na mapie sa nie znane wartosci!\nX: %d Y:%d\nWartosc: %d",i,j,mapa[i][j]);
                 exit(EXIT_FAILURE);
             }
-            if(mapa[i][j] == mCOIN){
+            if(mapa[i][j] == mCOIN) {
                 coin_position.push_back(vec3((float)i,0.75f,(float)j));
             }
         }
@@ -34,16 +34,20 @@ void Map::drawMapInConsole(bool simple) {
                 case mFLOR: {
                     printf("   ");
                     break;
-                } case mPMAN: {
+                }
+                case mPMAN: {
                     printf(" P ");
                     break;
-                } case mWALL: {
+                }
+                case mWALL: {
                     printf(" # ");
                     break;
-                } case mCOIN: {
+                }
+                case mCOIN: {
                     printf(" O ");
                     break;
-                } default: {
+                }
+                default: {
                     printf(" ? ");
                     break;
                 }
@@ -79,21 +83,16 @@ void Map::drawSolid(GLuint &texWall,mat4 &V) {
 
 void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
     glEnable(GL_NORMALIZE);
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
     glBindTexture(GL_TEXTURE_2D,tex);
-
     mat4 M=mat4(1.0f);
     M=translate(M,position);
     glLoadMatrixf(value_ptr(V*M));
-
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
     glNormalPointer(GL_FLOAT,sizeof(float)*3,&(this->TEMPnormals[0]));
     glTexCoordPointer(2,GL_FLOAT,0,&(this->TEMPuvs[0]));
-
     float ambient[] = {0,0,0,1};
     float emision[] = {0,0,0,1};
     float diffuse[] = {0.7,0.5,0.5,1};
@@ -104,9 +103,7 @@ void Map::drawElem(GLuint &tex,mat4 &V,vec3 &position) {
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-
     glDrawArrays(GL_TRIANGLES,0,this->TEMPvCount);
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

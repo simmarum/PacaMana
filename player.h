@@ -12,6 +12,8 @@ public:
     void WallDetect(Map* &mapa,colision_length colision_table[]);
     void CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position);
 
+    float rotation_speed;
+
     std::vector< float > TEMPvertices2;
     std::vector< float > TEMPuvs2;
     std::vector< float > TEMPnormals2;

@@ -30,6 +30,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-fexceptions" />
 			<Add option="-DGLEW_STATIC" />
 			<Add directory="glm" />
@@ -52,6 +53,8 @@
 		<Unit filename="constants.h" />
 		<Unit filename="floor.cpp" />
 		<Unit filename="floor.h" />
+		<Unit filename="licznik.cpp" />
+		<Unit filename="licznik.h" />
 		<Unit filename="loaderOBJ.cpp" />
 		<Unit filename="loaderOBJ.h" />
 		<Unit filename="lodepng.cpp" />

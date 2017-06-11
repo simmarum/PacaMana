@@ -19,6 +19,7 @@ Player::Player(Map* &mapa,colision_length &colision_length) {
     rotation = vec3(0.0,0.0,-10.0f*PI/180.0f);
     scale = vec3(1.0,1.0,1.0);
     speed = 2;
+    rotation_speed = PI/2;
     struct colision_length usable;
     res = loadOBJ(mPlayer2, this->TEMPvertices2, this->TEMPuvs2, this->TEMPnormals2,this->TEMPvCount2,usable);
     if(!res) {
@@ -29,8 +30,8 @@ Player::Player(Map* &mapa,colision_length &colision_length) {
     colision_length.radius = sqrt(2)*colision_length.toX;
     position2 = position;
     rotation2 = rotation;
-    scale2 = vec3(0.99f,0.99f,0.99f);
-    speed2 = 4;
+    scale2 = scale;
+    speed2 = 5;
     rotation_temp = rotation2.z;
     findPosition(mapa);
 }
@@ -122,17 +123,15 @@ void Player::drawSolid_2(GLuint &tex,mat4 &V) {
 }
 
 void Player::CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
-    for(int i=0; i<coin_position.size(); i++) {
-            float cX = coin_position[i].x;
-            float cZ = coin_position[i].z;
-            float pX = this->position.x;
-            float pZ = this->position.z;
-            if(sqrt(fabs(cX-pX)*fabs(cX-pX)+fabs(cZ-pZ)*fabs(cZ-pZ)) < colision_table[mPMAN].toX + colision_table[mCOIN].toX){
-                printf("Zdobyles pieniazka ; )\n");
-                coin_position.erase(coin_position.begin()+i);
-                printf("Pozostalo jeszcze: %d\n",coin_position.size());
-                break;
-            }
+    for(unsigned int i=0; i<coin_position.size(); i++) {
+        float cX = coin_position[i].x;
+        float cZ = coin_position[i].z;
+        float pX = this->position.x;
+        float pZ = this->position.z;
+        if(sqrt(fabs(cX-pX)*fabs(cX-pX)+fabs(cZ-pZ)*fabs(cZ-pZ)) < colision_table[mPMAN].toX + colision_table[mCOIN].toX) {
+            coin_position.erase(coin_position.begin()+i);
+            break;
+        }
     }
 }
 
