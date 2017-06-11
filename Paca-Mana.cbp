@@ -53,6 +53,8 @@
 		<Unit filename="constants.h" />
 		<Unit filename="floor.cpp" />
 		<Unit filename="floor.h" />
+		<Unit filename="ghost.cpp" />
+		<Unit filename="ghost.h" />
 		<Unit filename="licznik.cpp" />
 		<Unit filename="licznik.h" />
 		<Unit filename="loaderOBJ.cpp" />

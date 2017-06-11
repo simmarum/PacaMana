@@ -47,6 +47,11 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define tcoin "tekstury/coin.png"
 #define tworld "tekstury/world.png"
 #define tlicznik "tekstury/licznik.png"
+#define tghost1 "tekstury/ghost1.png"
+#define tghost2 "tekstury/ghost2.png"
+#define tghost3 "tekstury/ghost3.png"
+#define tghost4 "tekstury/ghost4.png"
+#define tghostX "tekstury/ghostX.png"
 
 // definicja klawiszy (latwa zmiana sterowania w kodzie)
 
@@ -90,12 +95,19 @@ Map *mapa = new Map(colision_table[mWALL],coin_position);
 Player *player = new Player(mapa, colision_table[mPMAN]);
 Coin *coin = new Coin(colision_table[mCOIN]);
 Licznik *licznik = new Licznik(unvalue);
+Ghost *ghost_1 = new Ghost(mapa,colision_table[mGHO1],mGHO1);
+Ghost *ghost_2 = new Ghost(mapa,colision_table[mGHO2],mGHO2);
+Ghost *ghost_3 = new Ghost(mapa,colision_table[mGHO3],mGHO3);
+Ghost *ghost_4 = new Ghost(mapa,colision_table[mGHO4],mGHO4);
 
 float aspect=1.0f; //Aktualny stosunek szerokoœci do wysokoœci okna
 float speed_y=0; //Szybkoœæ k¹towa obrotu obiektu w radianach na sekundê wokó³ osi y
 float camera_far = 1.235; // odleglosc kamery (promiec okregu po ktorym porusza sie kamera wokol PacMana)
 float camera_angle = 0.4; // odleglosc camery nad PacManem w osi Y
 
+bool ghost_run = false;
+bool game_start = false;
+bool game_end = false;
 // tablica dla kawiszy (aby pamietac jakie byly i bezproblemowo robic kombinajce klawiszy)
 bool keys[32];
 
@@ -106,6 +118,11 @@ GLuint texPlayer;
 GLuint texCoin;
 GLuint texWorld;
 GLuint texLicznik;
+GLuint texGhost1;
+GLuint texGhost2;
+GLuint texGhost3;
+GLuint texGhost4;
+GLuint texGhostX;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -237,6 +254,16 @@ void initOpenGLProgram(GLFWwindow* window) {
     wczytajObraz(texCoin, tcoin);
     /// -> Wczytaj obrazek - licznik
     wczytajObraz(texLicznik, tlicznik);
+    /// -> Wczytaj obrazek - ghost1
+    wczytajObraz(texGhost1, tghost1);
+    /// -> Wczytaj obrazek - ghost2
+    wczytajObraz(texGhost2, tghost2);
+    /// -> Wczytaj obrazek - ghost3
+    wczytajObraz(texGhost3, tghost3);
+    /// -> Wczytaj obrazek - ghost4
+    wczytajObraz(texGhost4, tghost4);
+    /// -> Wczytaj obrazek - ghostX
+    wczytajObraz(texGhostX, tghostX);
     /// ^^^^^^
     /// ustawienie pozycji swiata? (gwiazd)
     world->position = vec3(SZEROKOSC_MAPY/2,0.0,WYSOKOSC_MAPY/2);
@@ -311,6 +338,17 @@ void drawScene(GLFWwindow* window) {
     mapa->drawSolid(texSciana,V);
     player->drawSolid(texPlayer,V);
     coin->drawAll(texCoin,V,coin_position);
+    if(ghost_run) {
+        ghost_1->drawSolid(texGhostX,V);
+        ghost_2->drawSolid(texGhostX,V);
+        ghost_3->drawSolid(texGhostX,V);
+        ghost_4->drawSolid(texGhostX,V);
+    } else {
+        ghost_1->drawSolid(texGhost1,V);
+        ghost_2->drawSolid(texGhost2,V);
+        ghost_3->drawSolid(texGhost3,V);
+        ghost_4->drawSolid(texGhost4,V);
+    }
     licznik->drawAll(texLicznik,V,licznik_1_pos,licznik_2_pos,coin_position.size());
     //Przerzuæ tylny bufor na przedni
     glfwSwapBuffers(window);
@@ -324,6 +362,10 @@ void usunObiekty() {
     delete coin;
     delete world;
     delete licznik;
+    delete ghost_1;
+    delete ghost_2;
+    delete ghost_3;
+    delete ghost_4;
 }
 
 int main(void) {
@@ -350,6 +392,10 @@ int main(void) {
     glfwSetTime(0); //Wyzeruj timer
     //G³ówna pêtla
     while(!glfwWindowShouldClose(window)) {  //Tak d³ugo jak okno nie powinno zostaæ zamkniête
+        if(coin_position.empty()){
+            ghost_run=true;
+            game_end=true;
+        }
         doMove(mapa, colision_table,coin_position);
         coin->rotation_temp += (float)(glfwGetTime()*coin->speed);
         coin->rotation_temp = (float)(coin->rotation_temp - 2*PI*(ceil(coin->rotation_temp/(2*PI))));
@@ -367,6 +413,11 @@ int main(void) {
     glDeleteTextures(1,&texCoin);
     glDeleteTextures(1,&texWorld);
     glDeleteTextures(1,&texLicznik);
+    glDeleteTextures(1,&texGhost1);
+    glDeleteTextures(1,&texGhost2);
+    glDeleteTextures(1,&texGhost3);
+    glDeleteTextures(1,&texGhost4);
+    glDeleteTextures(1,&texGhostX);
     glfwDestroyWindow(window); //Usuñ kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajête przez GLFW
     exit(EXIT_SUCCESS);

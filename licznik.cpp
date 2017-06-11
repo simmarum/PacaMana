@@ -42,17 +42,13 @@ void Licznik::drawAll(GLuint &tex,mat4 &V,vec3 licznik_1_pos,vec3 licznik_2_pos,
     if(this->zgory) this->end_rotationX1 = (j-2)*(36.0f*PI/180.0f);
     else this->end_rotationX1 = j*(36.0f*PI/180.0f);
     float add_rot = (this->end_rotationX1-this->rotation.x)/this->smooth_rotX;
-   // printf("END: %f %f %f %f %f %f\n",(this->end_rotationX1-this->rotation.x),this->smooth_rotX,add_rot,this->end_rotationX1,this->rotation.x,fabs(this->rotation.x + add_rot - this->end_rotationX1));
     if(fabs(this->rotation.x + add_rot - this->end_rotationX1)>0.01) this->rotation.x += add_rot;
-    printf("R1: %f\n",this->rotation.x);
     drawSolid(tex,V);
     this->position = licznik_2_pos;
     if(this->zgory) this->end_rotationX2 = (d-2)*(36.0f*PI/180.0f);
     else  this->end_rotationX2 = d*(36.0f*PI/180.0f);
     add_rot = (this->end_rotationX2-this->rotation2.x)/this->smooth_rotX;
     if(fabs(this->rotation2.x + add_rot - this->end_rotationX2)>0.01) this->rotation2.x += add_rot;
-    //this->rotation.x = this->rotation2.x;
-    printf("R2: %f\n",this->rotation2.x);
     drawSolid_2(tex,V);
 }
 
