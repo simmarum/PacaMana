@@ -1,16 +1,15 @@
-#ifndef PLAYER_H_INCLUDED
-#define PLAYER_H_INCLUDED
+#ifndef GHOST_H_INCLUDED
+#define GHOST_H_INCLUDED
 
 #include "model.h"
 #include "map.h"
 
-class Player: public Model {
+class Ghost: public Model {
 public:
-    Player(Map* &mapa,colision_length &colision_length);
-    ~Player();
+    Ghost(Map* &mapa,colision_length &colision_length,int id);
+    ~Ghost();
     void drawSolid(GLuint &tex,mat4 &V);
-    void WallDetect(Map* &mapa,colision_length colision_table[]);
-    void CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position);
+    void WallDetect(Map* &mapa,colision_length colision_table[],int id);
 
     float rotation_speed;
 
@@ -24,9 +23,10 @@ public:
     float speed2;
 private:
     float rotation_temp;
-    void findPosition(Map* &mapa);
+    void findPosition(Map* &mapa,int id);
     void drawSolid_1(GLuint &tex,mat4 &V);
     void drawSolid_2(GLuint &tex,mat4 &V);
 };
 
-#endif // PLAYER_H_INCLUDED
+
+#endif // GHOST_H_INCLUDED

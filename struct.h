@@ -7,4 +7,5 @@ struct colision_length {
     float radius;
 };
 
+
 #endif // STRUCT_COSILION_H_INCLUDED
