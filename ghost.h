@@ -9,7 +9,7 @@ public:
     Ghost(Map* &mapa,colision_length &colision_length,int id);
     ~Ghost();
     void drawSolid(GLuint &tex,mat4 &V);
-    void WallDetect(Map* &mapa,colision_length colision_table[],int id);
+    void WallDetect(Map* &mapa, colision_length colision_table[], int id);
 
     float rotation_speed;
 

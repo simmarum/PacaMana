@@ -160,6 +160,31 @@ void doMove(Map* &mapa,colision_length colision_table[],std::vector <glm::vec3> 
     }
 }
 
+void doGhostMove(Map* &mapa, colision_length colision_table[]) {
+//    rotateGhostLEFT(ghost_1);
+//    goGhostSTRAIGHT(ghost_1, mapa, colision_table, 1);
+//    if(keys[up]) goSTRAIGHT(player,mapa,colision_table,coin_position);  // do przodu
+//    if(keys[down]) goBACK(player, mapa, colision_table,coin_position);  // do tylu
+//    if(keys[right]) rotateRIGHT(player);  // obrot w prawo
+//    if(keys[left]) rotateLEFT(player);  // obrot w lewo
+//    if(keys[left] && keys[up]) {  // po skosie gora/lewo
+//        rotateLEFT(player);
+//        goSTRAIGHT(player,mapa,colision_table,coin_position);
+//    }
+//    if(keys[left] && keys[down]) {  // po skosie dol/lewo
+//        rotateRIGHT(player);
+//        goBACK(player, mapa, colision_table,coin_position);
+//    }
+//    if(keys[right] && keys[up]) {  // po skosie gora/prawo
+//        rotateRIGHT(player);
+//        goSTRAIGHT(player,mapa,colision_table,coin_position);
+//    }
+//    if(keys[right] && keys[down]) {  // po skosie dol/prawo
+//        rotateLEFT(player);
+//        goBACK(player, mapa, colision_table,coin_position);
+//    }
+}
+
 //Procedura obsługi klawiatury
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(action == GLFW_PRESS) {
@@ -393,10 +418,13 @@ int main(void) {
     //G³ówna pêtla
     while(!glfwWindowShouldClose(window)) {  //Tak d³ugo jak okno nie powinno zostaæ zamkniête
         if(coin_position.empty()){
-            ghost_run=true;
-            game_end=true;
+            ghost_run = true;
+            game_end = true;
         }
-        doMove(mapa, colision_table,coin_position);
+
+        doMove(mapa, colision_table, coin_position);
+        doGhostMove(mapa, colision_table);
+
         coin->rotation_temp += (float)(glfwGetTime()*coin->speed);
         coin->rotation_temp = (float)(coin->rotation_temp - 2*PI*(ceil(coin->rotation_temp/(2*PI))));
         coin->rotation.y = coin->rotation_temp;
