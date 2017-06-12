@@ -565,7 +565,7 @@
 	"../trigonometric.hpp"
 	"../matrix.hpp"
 
-1497216690 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
+1497300643 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -576,6 +576,7 @@
 	<iostream>
 	<lodepng.h>
 	<string>
+	<time.h>
 	"constants.h"
 	"struct.h"
 	"allmodels.h"
@@ -673,15 +674,16 @@
 1497204288 c:\users\user\desktop\projekty\studia\pacamana\licznik.h
 	"model.h"
 
-1497299672 c:\users\user\desktop\projekty\studia\pacamana\ghost.h
+1497302179 c:\users\user\desktop\projekty\studia\pacamana\ghost.h
 	"model.h"
 	"map.h"
 
-1497299661 source:c:\users\user\desktop\projekty\studia\pacamana\ghost.cpp
+1497302703 source:c:\users\user\desktop\projekty\studia\pacamana\ghost.cpp
 	<stdio.h>
 	<cstdlib>
 	"ghost.h"
 	"loaderOBJ.h"
+	"move.h"
 
 1497204288 source:c:\users\user\desktop\projekty\studia\pacamana\licznik.cpp
 	<stdio.h>

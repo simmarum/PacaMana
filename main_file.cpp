@@ -30,6 +30,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <iostream>
 #include <lodepng.h>
 #include <string>
+#include <time.h>
 #include "constants.h"
 #include "struct.h"
 #include "allmodels.h"
@@ -371,6 +372,7 @@ void usunObiekty() {
 
 int main(void) {
     mapa->drawMapInConsole(true);
+    srand (time(NULL));
     GLFWwindow* window; //WskaŸnik na obiekt reprezentuj¹cy okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurê obs³ugi b³êdów
     if(!glfwInit()) {  //Zainicjuj bibliotekê GLFW
@@ -400,9 +402,9 @@ int main(void) {
 
         doMove(mapa, colision_table, coin_position);
         ghost_1->doGhostMove(mapa, colision_table);
-//        ghost_2->doGhostMove(mapa, colision_table);
-//        ghost_3->doGhostMove(mapa, colision_table);
-//        ghost_4->doGhostMove(mapa, colision_table);
+        ghost_2->doGhostMove(mapa, colision_table);
+        ghost_3->doGhostMove(mapa, colision_table);
+        ghost_4->doGhostMove(mapa, colision_table);
 
         coin->rotation_temp += (float)(glfwGetTime()*coin->speed);
         coin->rotation_temp = (float)(coin->rotation_temp - 2*PI*(ceil(coin->rotation_temp/(2*PI))));

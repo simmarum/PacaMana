@@ -3,6 +3,7 @@
 
 #include "ghost.h"
 #include "loaderOBJ.h"
+#include "move.h"
 
 #define mGhost1 "modeleBlend/ghost1.obj"
 #define mGhost2 "modeleBlend/ghost2.obj"
@@ -32,7 +33,9 @@ Ghost::Ghost(Map* &mapa,colision_length &colision_length,int id) {
     speed2 = 6;
     rotation_temp = rotation2.y;
     findPosition(mapa,id);
-    this->ID = id;
+    ID = id;
+    oldPZ = 0;
+    oldPX = 0;
 }
 
 Ghost::~Ghost() {
@@ -124,8 +127,66 @@ void Ghost::drawSolid_2(GLuint &tex,mat4 &V) {
 void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
     int px = (int)(this->position.x+0.5f); // znajduje srodek pola w x
     int pz = (int)(this->position.z+0.5f); // znajduje srodek pola w z
-    printf("px = %d\n", px);
-    printf("pz = %d\n", pz);
+
+    // mamy nowy kafelek
+    if(px != oldPX && pz != oldPZ) {
+        oldPX = px;
+        oldPZ = pz;
+
+        // Czy można się ruszyć w daną stronę
+        bool up, down, left, right = false;
+        int mozliwosci = 0;
+
+        if(mapa->mapa[px+1][pz] != mWALL) {
+            up = true;
+            mozliwosci++;
+        }
+        if(mapa->mapa[px-1][pz] != mWALL) {
+            down = true;
+            mozliwosci++;
+        }
+        if(mapa->mapa[px][pz+1] != mWALL) {
+            right = true;
+            mozliwosci++;
+        }
+        if(mapa->mapa[px][pz-1] != mWALL) {
+            left = true;
+            mozliwosci++;
+        }
+
+        // Losowanie ruchu
+        int wybrano = rand() % mozliwosci + 0;
+        printf("Wybrano = %d\n", wybrano);
+        if(up && wybrano == 0) {
+            przemieszczenieID = 0;
+        } else if(down && wybrano == 0) {
+            przemieszczenieID = 1;
+        } else if(right && wybrano == 0) {
+            przemieszczenieID = 2;
+        } else if(left && wybrano == 0) {
+            przemieszczenieID = 3;
+        }
+    } else {
+        // Kontynuacja ruchu
+        switch (przemieszczenieID) {
+            case 0: {
+                goGhostSTRAIGHT(this, mapa, colision_table, ID);
+                break;
+            }
+            case 1: {
+                goGhostBACK(this, mapa, colision_table, ID);
+                break;
+            }
+            case 2: {
+                printf("2\n");
+                break;
+            }
+            case 3: {
+                printf("3\n");
+                break;
+            }
+        }
+    }
 }
 
 void Ghost::WallDetect(Map* &mapa,colision_length colision_table[],int id) {
