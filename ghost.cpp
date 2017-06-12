@@ -32,6 +32,7 @@ Ghost::Ghost(Map* &mapa,colision_length &colision_length,int id) {
     speed2 = 6;
     rotation_temp = rotation2.y;
     findPosition(mapa,id);
+    this->ID = id;
 }
 
 Ghost::~Ghost() {
@@ -53,7 +54,6 @@ void Ghost::findPosition(Map* &mapa,int id) {
         }
     }
 }
-
 
 void Ghost::drawSolid(GLuint &tex,mat4 &V) {
     this->drawSolid_1(tex,V);
@@ -121,6 +121,12 @@ void Ghost::drawSolid_2(GLuint &tex,mat4 &V) {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
+    int px = (int)(this->position.x+0.5f); // znajduje srodek pola w x
+    int pz = (int)(this->position.z+0.5f); // znajduje srodek pola w z
+    printf("px = %d\n", px);
+    printf("pz = %d\n", pz);
+}
 
 void Ghost::WallDetect(Map* &mapa,colision_length colision_table[],int id) {
     /*
@@ -134,8 +140,8 @@ void Ghost::WallDetect(Map* &mapa,colision_length colision_table[],int id) {
     |  |___a____| |________| |___a____|
     |   ________   ________   ________
     |  |        | |        | |        |
-    |  |        | |  PAC   | |        |
-    |  |   7    | |  MAN   | |   3    |
+    |  |        | |        | |        |
+    |  |   7    | | GHOST  | |   3    |
     |  |        | |        | |        |
     |  |________| |________| |________|
     |   ________   ________   ________
