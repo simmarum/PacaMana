@@ -27,6 +27,7 @@ private:
     int ID;
     int oldPX;
     int oldPZ;
+    int counter;
     int przemieszczenieID;
     void findPosition(Map* &mapa,int id);
     void drawSolid_1(GLuint &tex,mat4 &V);
