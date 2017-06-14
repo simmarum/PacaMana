@@ -401,7 +401,7 @@ int main(void) {
         }
 
         doMove(mapa, colision_table, coin_position);
-        ghost_1->doGhostMove(mapa, colision_table);
+//        ghost_1->doGhostMove(mapa, colision_table);
 //        ghost_2->doGhostMove(mapa, colision_table);
 //        ghost_3->doGhostMove(mapa, colision_table);
 //        ghost_4->doGhostMove(mapa, colision_table);

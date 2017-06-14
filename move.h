@@ -11,7 +11,7 @@ void goBACK(Player *player, Map* &mapa, colision_length colision_table[],std::ve
 
 void rotateGhostLEFT(Ghost *ghost);
 void rotateGhostRIGHT(Ghost *ghost);
-void goGhostSTRAIGHT(Ghost *ghost, Map* &mapa, colision_length colision_table[], int id);
-void goGhostBACK(Ghost *ghost, Map* &mapa, colision_length colision_table[], int id);
+void goGhostSTRAIGHT(Ghost *ghost, Map* &mapa, colision_length colision_table[]);
+void goGhostBACK(Ghost *ghost, Map* &mapa, colision_length colision_table[]);
 
 #endif // MOVE_H_INCLUDED

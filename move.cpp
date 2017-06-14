@@ -27,6 +27,7 @@ void rotateGhostLEFT(Ghost *ghost) {
     ghost->rotation.y = ghost->rotation_temp;
 }
 void rotateGhostRIGHT(Ghost *ghost) {
+    ghost->rotation_temp = ghost->rotation.y;
     ghost->rotation_temp -= (float)(ghost->rotation_speed*glfwGetTime());
     ghost->rotation_temp = (float)(ghost->rotation_temp - 2*PI*(ceil(ghost->rotation_temp/(2*PI))));
     ghost->rotation.y = ghost->rotation_temp;

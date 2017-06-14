@@ -125,112 +125,149 @@ void Ghost::drawSolid_2(GLuint &tex,mat4 &V) {
 }
 
 void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
-    int px = (int)(this->position.x+0.5f); // znajduje srodek pola w x
-    int pz = (int)(this->position.z+0.5f); // znajduje srodek pola w z
-    int px_2 = (int)(this->position.x+0.1f); // znajduje srodek pola w x
-    int pz_2 = (int)(this->position.z+0.1f); // znajduje srodek pola w z
-
+    int px = (int)(this->position.x+0.5f);
+    int pz = (int)(this->position.z+0.5f);
 
     // mamy nowy kafelek
     if(px != oldPX && pz != oldPZ) {
+        // Zaznaczenie zmiany położenia
         oldPX = px;
         oldPZ = pz;
-        counter = 0;
-        printf("%d zmiana\n", ID);
+        oldRotation = rotation.y;
 
-        // Losowanie ruchu
-        int wybrano;
-        bool LOSUJ = true;
-        while(LOSUJ) {
-            wybrano = rand() % 4;
-            printf("%d wybrano = %d\n", ID, wybrano);
+        // UP - RIGHT - DOWN - LEFT
+        bool kierunki[4] = {false, false, false, false};
+        int mozliwosci = 0;
 
-            switch(wybrano) {
-                case 0: {
-                    if(mapa->mapa[px+1][pz] != mWALL) {
-                        przemieszczenieID = 0;
-                        LOSUJ = false;
-                    }
-                    break;
+        if(mapa->mapa[px+1][pz] != mWALL) { // UP
+            kierunki[0] = true;
+            mozliwosci++;
+        }
+        if(mapa->mapa[px-1][pz] != mWALL) { // DOWN
+            kierunki[2] = true;
+            mozliwosci++;
+        }
+        if(mapa->mapa[px][pz+1] != mWALL) { // RIGHT
+            kierunki[1] = true;
+            mozliwosci++;
+        }
+        if(mapa->mapa[px][pz-1] != mWALL) { // LEFT
+            kierunki[3] = true;
+            mozliwosci++;
+        }
+
+        printf("%d %d %d %d \n", kierunki[0], kierunki[1], kierunki[2], kierunki[3]);
+
+        // Losowanie numeru
+        int losowanie = rand() % mozliwosci + 1;
+        printf("los = %d \n", losowanie);
+
+        // Obliczenie obrotu
+        int obrot = abs((int)(rotation.y/(PI/2)));
+
+        // Przegląd
+        while(losowanie > 0) {
+            for(int i = 0; i < 4; i++) {
+                if(kierunki[i]) {
+                    losowanie--;
+                    przemieszczenieID = i;
                 }
-                case 1: {
-                    if(mapa->mapa[px-1][pz] != mWALL) {
-                        przemieszczenieID = 1;
-                        LOSUJ = false;
-                    }
+
+                if(losowanie == 0)
                     break;
-                }
-                case 2: {
-                    if(mapa->mapa[px][pz+1] != mWALL) {
-                        przemieszczenieID = 2;
-                        LOSUJ = false;
-                    }
-                    break;
-                }
-                case 3: {
-                    if(mapa->mapa[px][pz-1] != mWALL) {
-                        przemieszczenieID = 3;
-                        LOSUJ = false;
-                    }
-                    break;
-                }
             }
         }
+
+        printf("przemieszcz = %d \n", przemieszczenieID);
+        printf("obrot = %d \n", obrot);
+        przemieszczenieID = (przemieszczenieID + obrot) % 4;
+        printf("przemieszcz = %d \n", przemieszczenieID);
     } else {
         // Kontynuacja ruchu
         switch (przemieszczenieID) {
             case 0: {
-                goGhostSTRAIGHT(this, mapa, colision_table, ID);
-                if(mapa->mapa[px_2+1][pz_2] == mWALL) {
-                    oldPX = -1;
-                    oldPZ = -1;
-                }
+                goGhostSTRAIGHT(this, mapa, colision_table);
                 break;
             }
             case 1: {
-                goGhostBACK(this, mapa, colision_table, ID);
-                if(mapa->mapa[px_2-1][pz_2] == mWALL) {
-                    oldPX = -1;
-                    oldPZ = -1;
+                if(fabs(fabs(oldRotation) - fabs(rotation.y)) < ((PI-0.01f)/2)) {
+                    rotateGhostRIGHT(this);
+                } else {
+                    goGhostSTRAIGHT(this, mapa, colision_table);
                 }
                 break;
             }
             case 2: {
-                if(counter < 58) {
-                    rotateGhostRIGHT(this);
-                    counter++;
-                } else {
-                    goGhostSTRAIGHT(this, mapa, colision_table, ID);
-                }
-
-                if(mapa->mapa[px_2][pz_2+1] == mWALL) {
-                    oldPX = -1;
-                    oldPZ = -1;
-                }
+                goGhostBACK(this, mapa, colision_table);
                 break;
             }
             case 3: {
-                if(counter < 58) {
+                if(fabs(fabs(oldRotation) - fabs(rotation.y)) < ((PI-0.01f)/2)) {
                     rotateGhostLEFT(this);
-                    counter++;
                 } else {
-                    goGhostSTRAIGHT(this, mapa, colision_table, ID);
-                }
-
-                if(mapa->mapa[px_2][pz_2-1] == mWALL) {
-                    oldPX = -1;
-                    oldPZ = -1;
+                    goGhostSTRAIGHT(this, mapa, colision_table);
                 }
                 break;
             }
         }
+
+        if(checkCollision(mapa, colision_table)) {
+            oldPX = -1;
+            oldPZ = -1;
+        }
     }
 }
 
-void Ghost::WallDetect(Map* &mapa,colision_length colision_table[],int id) {
+bool Ghost::checkCollision(Map* &mapa,colision_length colision_table[]) {
+//    printf("test\n");
+    int px = (int)(this->position.x+0.5f);
+    int pz = (int)(this->position.z+0.5f);
+
+    int tryb = (przemieszczenieID + abs((int)(rotation.y/(PI/2)))) % 4;
+    printf("%d\n", tryb);
+
+    switch(tryb) {
+        case 0: {
+            if(mapa->mapa[px+1][pz] == mWALL) {
+                if(colision_table[mapa->mapa[px+1][pz]].toX + colision_table[ID].toX >= fabs((px+1)-this->position.x)) {
+                    return true;
+                }
+            }
+            break;
+        }
+        case 1: {
+            if(mapa->mapa[px][pz+1] == mWALL) {
+                if(colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[ID].toZ >= fabs((pz+1)-this->position.z)) {
+                    return true;
+                }
+            }
+            break;
+        }
+        case 2: {
+            if(mapa->mapa[px-1][pz] == mWALL) {
+                if(colision_table[mapa->mapa[px-1][pz]].toX + colision_table[ID].toX >= fabs((px-1)-this->position.x)) {
+                    return true;
+                }
+            }
+            break;
+        }
+        case 3: {
+            if(mapa->mapa[px][pz-1] == mWALL) {
+                if(colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[ID].toZ >= fabs((pz-1)-this->position.z)) {
+                    return true;
+                }
+            }
+            break;
+        }
+    }
+
+    return false;
+}
+
+void Ghost::WallDetect(Map* &mapa,colision_length colision_table[]) {
     /*
         SCHEMAT DETEKCJI SCIAN
-    X /|\
+  X ^
     |   ________   ________   ________
     |  |        | |        | |        |
     |  |        | |        | |        |
@@ -258,117 +295,117 @@ void Ghost::WallDetect(Map* &mapa,colision_length colision_table[],int id) {
     // dodawanie po 0.5 poniewaz tyle ma nasze pole w grze np. (0,0) pozycja to srodki bedzie na (0.5,0.5)
     /// Kolizja ze sciana nr 1
     if(mapa->mapa[px+1][pz]==1 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz>=0 && pz <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px+1][pz]].toX + colision_table[id].toX
+        if(colision_table[mapa->mapa[px+1][pz]].toX + colision_table[ID].toX
                 >= fabs((px+1)-this->position.x)) {
             // zderzenie !
             //printf("Sciana 1\n");
-            position.x = px+1 - (colision_table[mapa->mapa[px+1][pz]].toX + colision_table[id].toX);
+            position.x = px+1 - (colision_table[mapa->mapa[px+1][pz]].toX + colision_table[ID].toX);
         }
     }
     /// Kolizja ze sciana nr 3
     if(mapa->mapa[px][pz+1]==1 && px>=0 && px<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[id].toZ
+        if(colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[ID].toZ
                 >= fabs((pz+1)-this->position.z)) {
             // zderzenie !
             //printf("Sciana 3\n");
-            position.z = pz+1 - (colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[id].toZ);
+            position.z = pz+1 - (colision_table[mapa->mapa[px][pz+1]].toZ + colision_table[ID].toZ);
         }
     }
     /// Kolizja ze sciana nr 5
     if(mapa->mapa[px-1][pz]==1 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz>=0 && pz <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px-1][pz]].toX + colision_table[id].toX
+        if(colision_table[mapa->mapa[px-1][pz]].toX + colision_table[ID].toX
                 >= fabs((px-1)-this->position.x)) {
             // zderzenie !
             //printf("Sciana 5\n");
-            position.x = px-1 + (colision_table[mapa->mapa[px-1][pz]].toX + colision_table[id].toX);
+            position.x = px-1 + (colision_table[mapa->mapa[px-1][pz]].toX + colision_table[ID].toX);
         }
     }
     /// Kolizja ze sciana nr 7
     if(mapa->mapa[px][pz-1]==1 && px>=0 && px<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[id].toZ
+        if(colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[ID].toZ
                 >= fabs((pz-1)-this->position.z)) {
             // zderzenie !
             //printf("Sciana 7\n");
-            position.z = pz-1 + (colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[id].toZ);
+            position.z = pz-1 + (colision_table[mapa->mapa[px][pz-1]].toZ + colision_table[ID].toZ);
         }
     }
     /// Kolizja ze sciana nr 2
     if(mapa->mapa[px+1][pz+1]==1 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[id].toX
+        if(colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[ID].toX
                 >= fabs((px+1)-this->position.x)
-                && colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[id].toZ
+                && colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[ID].toZ
                 >= fabs((pz+1)-this->position.z)) {
             // zderzenie !
-            if(fabs((pz+1)-this->position.z) < colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[id].toZ
+            if(fabs((pz+1)-this->position.z) < colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[ID].toZ
                     && fabs((pz+1)-this->position.z) < fabs((px+1)-this->position.x)) {
                 /// Kolizja ze sciana nr 2a
                 //printf("Sciana 2a\n");
-                position.x = px+1 - (colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[id].toX);
-            } else if(fabs((px+1)-this->position.x) < colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[id].toX
+                position.x = px+1 - (colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[ID].toX);
+            } else if(fabs((px+1)-this->position.x) < colision_table[mapa->mapa[px+1][pz+1]].toX + colision_table[ID].toX
                       && fabs((px+1)-this->position.x) < fabs((pz+1)-this->position.z)) {
                 /// Kolizja ze sciana nr 2b
                 //printf("Sciana 2b\n");
-                position.z = pz+1 - (colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[id].toZ);
+                position.z = pz+1 - (colision_table[mapa->mapa[px+1][pz+1]].toZ + colision_table[ID].toZ);
             }
         }
     }
     /// Kolizja ze sciana nr 4
     if(mapa->mapa[px-1][pz+1]==1 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz+1>=0 && pz+1 <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[id].toX
+        if(colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[ID].toX
                 >= fabs((px-1)-this->position.x)
-                && colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[id].toZ
+                && colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[ID].toZ
                 >= fabs((pz+1)-this->position.z)) {
             // zderzenie !
-            if(fabs((pz+1)-this->position.z) < colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[id].toZ
+            if(fabs((pz+1)-this->position.z) < colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[ID].toZ
                     && fabs((pz+1)-this->position.z) < fabs((px-1)-this->position.x)) {
                 /// Kolizja ze sciana nr 4a
                 //printf("Sciana 4a\n");
-                position.x = px-1 + (colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[id].toX);
-            } else if(fabs((px-1)-this->position.x) < colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[id].toX
+                position.x = px-1 + (colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[ID].toX);
+            } else if(fabs((px-1)-this->position.x) < colision_table[mapa->mapa[px-1][pz+1]].toX + colision_table[ID].toX
                       && fabs((px-1)-this->position.x) < fabs((pz+1)-this->position.z)) {
                 /// Kolizja ze sciana nr 4b
                 //printf("Sciana 4b\n");
-                position.z = pz+1 - (colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[id].toZ);
+                position.z = pz+1 - (colision_table[mapa->mapa[px-1][pz+1]].toZ + colision_table[ID].toZ);
             }
         }
     }
     /// Kolizja ze sciana nr 6
     if(mapa->mapa[px-1][pz-1]==1 && px-1>=0 && px-1<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[id].toX
+        if(colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[ID].toX
                 >= fabs((px-1)-this->position.x)
-                && colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[id].toZ
+                && colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[ID].toZ
                 >= fabs((pz-1)-this->position.z)) {
             // zderzenie !
-            if(fabs((pz-1)-this->position.z) < colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[id].toZ
+            if(fabs((pz-1)-this->position.z) < colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[ID].toZ
                     && fabs((pz-1)-this->position.z) < fabs((px-1)-this->position.x)) {
                 /// Kolizja ze sciana nr 6a
                 //printf("Sciana 6a\n");
-                position.x = px-1 + (colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[id].toX);
-            } else if(fabs((px-1)-this->position.x) < colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[id].toX
+                position.x = px-1 + (colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[ID].toX);
+            } else if(fabs((px-1)-this->position.x) < colision_table[mapa->mapa[px-1][pz-1]].toX + colision_table[ID].toX
                       && fabs((px-1)-this->position.x) < fabs((pz-1)-this->position.z)) {
                 /// Kolizja ze sciana nr 6b
                 //printf("Sciana 6b\n");
-                position.z = pz-1 + (colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[id].toZ);
+                position.z = pz-1 + (colision_table[mapa->mapa[px-1][pz-1]].toZ + colision_table[ID].toZ);
             }
         }
     }
     /// Kolizja ze sciana nr 8
     if(mapa->mapa[px+1][pz-1]==1 && px+1>=0 && px+1<WYSOKOSC_MAPY && pz-1>=0 && pz-1 <SZEROKOSC_MAPY) {
-        if(colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[id].toX
+        if(colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[ID].toX
                 >= fabs((px+1)-this->position.x)
-                && colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[id].toZ
+                && colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[ID].toZ
                 >= fabs((pz-1)-this->position.z)) {
             // zderzenie !
-            if(fabs((pz-1)-this->position.z) < colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[id].toZ
+            if(fabs((pz-1)-this->position.z) < colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[ID].toZ
                     && fabs((pz-1)-this->position.z) < fabs((px+1)-this->position.x)) {
                 /// Kolizja ze sciana nr 8a
                 //printf("Sciana 8a\n");
-                position.x = px+1 - (colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[id].toX);
-            } else if(fabs((px+1)-this->position.x) < colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[id].toX
+                position.x = px+1 - (colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[ID].toX);
+            } else if(fabs((px+1)-this->position.x) < colision_table[mapa->mapa[px+1][pz-1]].toX + colision_table[ID].toX
                       && fabs((px+1)-this->position.x) < fabs((pz-1)-this->position.z)) {
                 /// Kolizja ze sciana nr 8b
                 //printf("Sciana 8b\n");
-                position.z = pz-1 + (colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[id].toZ);
+                position.z = pz-1 + (colision_table[mapa->mapa[px+1][pz-1]].toZ + colision_table[ID].toZ);
             }
         }
     }
