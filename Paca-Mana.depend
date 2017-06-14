@@ -565,7 +565,7 @@
 	"../trigonometric.hpp"
 	"../matrix.hpp"
 
-1497469902 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
+1497477473 source:c:\users\user\desktop\projekty\studia\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -584,7 +584,7 @@
 	"loaderOBJ.h"
 	<string>
 
-1497204288 c:\users\user\desktop\projekty\studia\pacamana\constants.h
+1497477332 c:\users\user\desktop\projekty\studia\pacamana\constants.h
 
 1497204288 c:\users\user\desktop\projekty\studia\pacamana\allmodels.h
 	"wall.h"
@@ -678,7 +678,7 @@
 	"model.h"
 	"map.h"
 
-1497476236 source:c:\users\user\desktop\projekty\studia\pacamana\ghost.cpp
+1497476451 source:c:\users\user\desktop\projekty\studia\pacamana\ghost.cpp
 	<stdio.h>
 	<cstdlib>
 	"ghost.h"

@@ -370,6 +370,30 @@ void usunObiekty() {
     delete ghost_4;
 }
 
+bool checkLooser(Map* &mapa,colision_length colision_table[]) {
+    float odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_1->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_1->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_2->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_2->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_3->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_3->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_4->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_4->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    return false;
+}
+
 int main(void) {
     mapa->drawMapInConsole(true);
     srand (time(NULL));
@@ -398,6 +422,12 @@ int main(void) {
         if(coin_position.empty()){
             ghost_run = true;
             game_end = true;
+        }
+
+        if(checkLooser(mapa, colision_table)) {
+            printf("PRZEGRALES!\n");
+            game_end = true;
+            // akcja na zakończenie
         }
 
         doMove(mapa, colision_table, coin_position);
