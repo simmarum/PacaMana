@@ -27,8 +27,10 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 #include <lodepng.h>
 #include <string>
+#include <time.h>
 #include "constants.h"
 #include "struct.h"
 #include "allmodels.h"
@@ -368,8 +370,33 @@ void usunObiekty() {
     delete ghost_4;
 }
 
+bool checkLooser(Map* &mapa,colision_length colision_table[]) {
+    float odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_1->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_1->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_2->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_2->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_3->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_3->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    odleglosc = sqrt(pow(player->position.x + colision_table[mPMAN].toX - ghost_4->position.x - colision_table[mGHO1].toX, 2)
+                            + pow(player->position.z + colision_table[mPMAN].toZ - ghost_4->position.z - colision_table[mGHO1].toZ, 2));
+    if(odleglosc < mODLE)
+        return true;
+
+    return false;
+}
+
 int main(void) {
     mapa->drawMapInConsole(true);
+    srand (time(NULL));
     GLFWwindow* window; //WskaŸnik na obiekt reprezentuj¹cy okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurê obs³ugi b³êdów
     if(!glfwInit()) {  //Zainicjuj bibliotekê GLFW
@@ -393,10 +420,22 @@ int main(void) {
     //G³ówna pêtla
     while(!glfwWindowShouldClose(window)) {  //Tak d³ugo jak okno nie powinno zostaæ zamkniête
         if(coin_position.empty()){
-            ghost_run=true;
-            game_end=true;
+            ghost_run = true;
+            game_end = true;
         }
-        doMove(mapa, colision_table,coin_position);
+
+        if(checkLooser(mapa, colision_table)) {
+            printf("PRZEGRALES!\n");
+            game_end = true;
+            // akcja na zakończenie
+        }
+
+        doMove(mapa, colision_table, coin_position);
+//        ghost_1->doGhostMove(mapa, colision_table);
+//        ghost_2->doGhostMove(mapa, colision_table);
+//        ghost_3->doGhostMove(mapa, colision_table);
+//        ghost_4->doGhostMove(mapa, colision_table);
+
         coin->rotation_temp += (float)(glfwGetTime()*coin->speed);
         coin->rotation_temp = (float)(coin->rotation_temp - 2*PI*(ceil(coin->rotation_temp/(2*PI))));
         coin->rotation.y = coin->rotation_temp;

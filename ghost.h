@@ -9,7 +9,7 @@ public:
     Ghost(Map* &mapa,colision_length &colision_length,int id);
     ~Ghost();
     void drawSolid(GLuint &tex,mat4 &V);
-    void WallDetect(Map* &mapa,colision_length colision_table[],int id);
+    void WallDetect(Map* &mapa, colision_length colision_table[]);
 
     float rotation_speed;
 
@@ -21,8 +21,15 @@ public:
     vec3 rotation2;
     vec3 scale2;
     float speed2;
+    void doGhostMove(Map* &mapa, colision_length colision_table[]);
+    bool checkCollision(Map* &mapa,colision_length colision_table[]);
+    float rotation_temp = rotation.y;
 private:
-    float rotation_temp;
+    int ID;
+    int oldPX;
+    int oldPZ;
+    float oldRotation;
+    int przemieszczenieID;
     void findPosition(Map* &mapa,int id);
     void drawSolid_1(GLuint &tex,mat4 &V);
     void drawSolid_2(GLuint &tex,mat4 &V);
