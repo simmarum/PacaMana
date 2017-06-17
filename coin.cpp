@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <cstdlib>
 
@@ -50,9 +49,9 @@ void Coin::drawSolid(GLuint &tex,mat4 &V) {
     glTexCoordPointer(2,GL_FLOAT,0,&(this->TEMPuvs[0]));
     float ambient[] = {0,0,0,1};
     float emision[] = {0,0,0,1};
-    float diffuse[] = {0.7,0.5,0.5,1};
-    float specular[] = {0.5,0.5,0.5,1};
-    float shininess = 50;
+    float diffuse[] = {0.3,0.3,0.3,1};
+    float specular[] = {1.0,1.0,1.0,1};
+    float shininess = 90;
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);

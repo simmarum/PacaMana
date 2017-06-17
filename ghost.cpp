@@ -81,9 +81,9 @@ void Ghost::drawSolid_1(GLuint &tex,mat4 &V) {
     glTexCoordPointer(2,GL_FLOAT,0,&(this->TEMPuvs[0]));
     float ambient[] = {0,0,0,1};
     float emision[] = {0,0,0,1};
-    float diffuse[] = {0.7,0.5,0.5,1};
-    float specular[] = {0.5,0.5,0.5,1};
-    float shininess = 50;
+    float diffuse[] = {0.3,0.3,0.3,1};
+    float specular[] = {0.9,0.9,0.9,1};
+    float shininess = 120;
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
@@ -113,9 +113,9 @@ void Ghost::drawSolid_2(GLuint &tex,mat4 &V) {
     glTexCoordPointer(2,GL_FLOAT,0,&(this->TEMPuvs2[0]));
     float ambient[] = {0,0,0,1};
     float emision[] = {0,0,0,1};
-    float diffuse[] = {0.7,0.5,0.5,1};
-    float specular[] = {0.5,0.5,0.5,1};
-    float shininess = 50;
+    float diffuse[] = {0.1,0.1,0.1,1};
+    float specular[] = {0.1,0.1,0.1,1};
+    float shininess = 20;
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
