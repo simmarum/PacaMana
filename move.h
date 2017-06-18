@@ -6,8 +6,8 @@
 
 void rotateLEFT(Player *player);
 void rotateRIGHT(Player *player);
-void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position);
-void goBACK(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position);
+void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position,irrklang::ISoundEngine* engine,irrklang::ISoundSource* coin_sound);
+void goBACK(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position,irrklang::ISoundEngine* engine,irrklang::ISoundSource* coin_sound);
 
 void rotateGhostLEFT(Ghost *ghost);
 void rotateGhostRIGHT(Ghost *ghost);

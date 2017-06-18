@@ -12,17 +12,17 @@ void rotateRIGHT(Player *player) {
     player->rotation_temp = (float)(player->rotation_temp - 2*PI*(ceil(player->rotation_temp/(2*PI))));
     player->rotation.y = player->rotation_temp;
 }
-void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
+void goSTRAIGHT(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position,irrklang::ISoundEngine* engine,irrklang::ISoundSource* coin_sound) {
     player->position.x += cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x
     player->position.z -= sin(player->rotation.y)*player->speed*glfwGetTime(); // ruch z
     player->WallDetect(mapa,colision_table); // wykrycie kolizji
-    player->CoinDetect(colision_table,coin_position);
+    player->CoinDetect(colision_table,coin_position,engine,coin_sound);
 }
-void goBACK(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
+void goBACK(Player *player, Map* &mapa, colision_length colision_table[],std::vector <glm::vec3> &coin_position,irrklang::ISoundEngine* engine,irrklang::ISoundSource* coin_sound) {
     player->position.x -= cos(player->rotation.y)*player->speed*glfwGetTime(); // ruch x
     player->position.z += sin(player->rotation.y)*player->speed*glfwGetTime(); // ruch z
     player->WallDetect(mapa,colision_table); // wykrycie kolizji
-    player->CoinDetect(colision_table,coin_position);
+    player->CoinDetect(colision_table,coin_position,engine,coin_sound);
 }
 
 void rotateGhostRIGHT(Ghost *ghost) {

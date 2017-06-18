@@ -4,6 +4,7 @@
 #include "player.h"
 #include "loaderOBJ.h"
 
+
 #define mPlayer1 "modeleBlend/pacman1.obj"
 #define mPlayer2 "modeleBlend/pacman2.obj"
 
@@ -19,7 +20,7 @@ Player::Player(Map* &mapa,colision_length &colision_length) {
     rotation = vec3(0.0,0.0,-10.0f*PI/180.0f);
     scale = vec3(1.0,1.0,1.0);
     speed = 2;
-    rotation_speed = PI/2;
+    rotation_speed = PI*0.8;
     struct colision_length usable;
     res = loadOBJ(mPlayer2, this->TEMPvertices2, this->TEMPuvs2, this->TEMPnormals2,this->TEMPvCount2,usable);
     if(!res) {
@@ -125,7 +126,7 @@ void Player::drawSolid_2(GLuint &tex,mat4 &V) {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Player::CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position) {
+void Player::CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position,irrklang::ISoundEngine* engine,irrklang::ISoundSource* coin_sound) {
     for(unsigned int i=0; i<coin_position.size(); i++) {
         float cX = coin_position[i].x;
         float cZ = coin_position[i].z;
@@ -133,11 +134,11 @@ void Player::CoinDetect(colision_length colision_table[],std::vector <glm::vec3>
         float pZ = this->position.z;
         if(sqrt(fabs(cX-pX)*fabs(cX-pX)+fabs(cZ-pZ)*fabs(cZ-pZ)) < colision_table[mPMAN].toX + colision_table[mCOIN].toX) {
             coin_position.erase(coin_position.begin()+i);
+            engine->play2D(coin_sound);
             break;
         }
     }
 }
-
 
 void Player::WallDetect(Map* &mapa,colision_length colision_table[]) {
     /*

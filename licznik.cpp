@@ -29,14 +29,16 @@ Licznik::~Licznik() {
     TEMPnormals.clear();
 }
 
-void Licznik::drawAll(GLuint &tex,mat4 &V,vec3 licznik_1_pos,vec3 licznik_2_pos,int number_coin) {
-    int d=9,j=9;
-    if(number_coin > 99) {
+void Licznik::drawAll(GLuint &tex,mat4 &V,vec3 licznik_1_pos,vec3 licznik_2_pos,vec3 licznik_3_pos,int number_coin) {
+    int s=9,d=9,j=9;
+    if(number_coin > 999) {
+        s=9;
         d=9;
         j=9;
     } else {
         j=number_coin%10;
-        d=number_coin/10;
+        d=(number_coin/10)%10;
+        s=(number_coin/100);
     }
     this->position = licznik_1_pos;
     if(this->zgory) this->end_rotationX1 = (j-2)*(36.0f*PI/180.0f);
@@ -50,6 +52,14 @@ void Licznik::drawAll(GLuint &tex,mat4 &V,vec3 licznik_1_pos,vec3 licznik_2_pos,
     add_rot = (this->end_rotationX2-this->rotation2.x)/this->smooth_rotX;
     if(fabs(this->rotation2.x + add_rot - this->end_rotationX2)>0.01) this->rotation2.x += add_rot;
     drawSolid_2(tex,V);
+
+    this->position = licznik_3_pos;
+    if(this->zgory) this->end_rotationX3 = (s-2)*(36.0f*PI/180.0f);
+    else  this->end_rotationX3 = s*(36.0f*PI/180.0f);
+    add_rot = (this->end_rotationX3-this->rotation3.x)/this->smooth_rotX;
+    if(fabs(this->rotation3.x + add_rot - this->end_rotationX3)>0.01) this->rotation3.x += add_rot;
+    drawSolid_3(tex,V);
+
 }
 
 void Licznik::drawSolid(GLuint &tex,mat4 &V) {
@@ -97,6 +107,39 @@ void Licznik::drawSolid_2(GLuint &tex,mat4 &V) {
     M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
     M=rotate(M,this->rotation.z,vec3(0.0f,0.0f,1.0f));
     M=rotate(M,this->rotation2.x,vec3(1.0f,0.0f,0.0f));
+    M=glm::scale(M,this->scale);
+    glLoadMatrixf(value_ptr(V*M));
+    glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));
+    glNormalPointer(GL_FLOAT,sizeof(float)*3,&(this->TEMPnormals[0]));
+    glTexCoordPointer(2,GL_FLOAT,0,&(this->TEMPuvs[0]));
+    float ambient[] = {0,0,0,1};
+    float emision[] = {0,0,0,1};
+    float diffuse[] = {0.7,0.5,0.5,1};
+    float specular[] = {0.5,0.5,0.5,1};
+    float shininess = 50;
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    glDrawArrays(GL_TRIANGLES,0,this->TEMPvCount);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void Licznik::drawSolid_3(GLuint &tex,mat4 &V) {
+    glEnable(GL_NORMALIZE);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glBindTexture(GL_TEXTURE_2D,tex);
+    glShadeModel(GL_SMOOTH);
+    mat4 M=mat4(1.0f);
+    M=translate(M,this->position);
+    M=rotate(M,this->rotation.y,vec3(0.0f,1.0f,0.0f));
+    M=rotate(M,this->rotation.z,vec3(0.0f,0.0f,1.0f));
+    M=rotate(M,this->rotation3.x,vec3(1.0f,0.0f,0.0f));
     M=glm::scale(M,this->scale);
     glLoadMatrixf(value_ptr(V*M));
     glVertexPointer(3,GL_FLOAT,0,&(this->TEMPvertices[0]));

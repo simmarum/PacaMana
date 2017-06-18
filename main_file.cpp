@@ -39,6 +39,9 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "loaderOBJ.h"
 #include <string>
 
+#include "irr_klang/irrKlang.h" // muzyka
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+
 #define szerokoscOkna 500
 #define wysokoscOkna 500
 
@@ -84,9 +87,10 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define LOOK_BACK 5
 
 // ustawienia gry
-#define BIG_COIN_NUMBER 2
+#define BIG_COIN_NUMBER 17
 
 using namespace glm;
+using namespace irrklang;
 
 // tablica kolizji (aby nie trzymiac wymiarow w poszczegolnych obiektach tylko ogolnie dla danego typu obiektu
 colision_length colision_table[MAX_MODEL_ON_MAP];
@@ -136,6 +140,13 @@ GLuint texGhostX;
 GLuint texStart;
 GLuint texEnd;
 GLuint texWin;
+
+// utwory
+ISoundEngine* engine = createIrrKlangDevice(); // silnik muzyczny
+ISoundSource* menu_sound = engine->addSoundSourceFromFile("media/getout.ogg");
+ISoundSource* game_sound = engine->addSoundSourceFromFile("media/ophelia.mp3");
+ISoundSource* coin_sound = engine->addSoundSourceFromFile("media/bell.wav");
+
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -191,30 +202,30 @@ void doMove(Map* &mapa,colision_length colision_table[],std::vector <glm::vec3> 
     if(keys[RIGHT]) n_move_key++;
     // jeden klawisz
     if(n_move_key==1) {
-        if(keys[UP]) goSTRAIGHT(player,mapa,colision_table,coin_position);  // do przodu
-        else if(keys[DOWN]) goBACK(player, mapa, colision_table,coin_position);  // do tylu
+        if(keys[UP]) goSTRAIGHT(player,mapa,colision_table,coin_position,engine,coin_sound);  // do przodu
+        else if(keys[DOWN]) goBACK(player, mapa, colision_table,coin_position,engine,coin_sound);  // do tylu
         else if(keys[RIGHT]) rotateRIGHT(player);  // obrot w prawo
         else if(keys[LEFT]) rotateLEFT(player);  // obrot w lewo
     } else { // wiecej niz jeden klawisz
         if(keys[LEFT] && keys[UP]) {  // po skosie gora/lewo
             rotateLEFT(player);
-            goSTRAIGHT(player,mapa,colision_table,coin_position);
+            goSTRAIGHT(player,mapa,colision_table,coin_position,engine,coin_sound);
         } else if(keys[RIGHT] && keys[UP]) { // po skosie gora/prawo
             rotateRIGHT(player);
-            goSTRAIGHT(player,mapa,colision_table,coin_position);
+            goSTRAIGHT(player,mapa,colision_table,coin_position,engine,coin_sound);
         } else if(keys[RIGHT] && keys[DOWN]) { // po skosie dol/prawo
             rotateLEFT(player);
-            goBACK(player, mapa, colision_table,coin_position);
+            goBACK(player, mapa, colision_table,coin_position,engine,coin_sound);
         } else if(keys[LEFT] && keys[DOWN]) { // po skosie dol/lewo
             rotateRIGHT(player);
-            goBACK(player, mapa, colision_table,coin_position);
+            goBACK(player, mapa, colision_table,coin_position,engine,coin_sound);
         }
     }
 }
 
 //Procedura obsługi klawiatury
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if(action == GLFW_PRESS && key == K_FULLSCREEN) {
+    if(action == GLFW_PRESS && key == K_FULLSCREEN && (game_end==true || game_start==false)) {
         const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         int window_width = mode->width;
         int window_height = mode->height;
@@ -231,11 +242,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
     }
     if(game_start==false) {
-        if(key == GLFW_KEY_ENTER) game_start=true;
+        if(key == GLFW_KEY_ENTER) {
+            game_start=true;
+            engine->stopAllSounds();
+            engine->play2D(game_sound,true);
+        }
     } else {
         if(game_end==true) {
-            if(key == GLFW_KEY_ENTER) glfwSetWindowShouldClose(window, 1);
-            if(key == GLFW_KEY_SPACE) configGame();
+            if(key == GLFW_KEY_ENTER) {
+                glfwSetWindowShouldClose(window, 1);
+                engine->stopAllSounds();
+            }
+            if(key == GLFW_KEY_SPACE) {
+                configGame();
+                engine->stopAllSounds();
+                engine->play2D(game_sound,true);
+            }
         } else {
             if(action == GLFW_PRESS) {
                 if(key == K_LEFT) keys[LEFT] = true;
@@ -357,8 +379,9 @@ void drawInfo(GLFWwindow* window,GLuint tex) {
 // funckja rysujaca rozgrywke!
 void drawGame(GLFWwindow* window) {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wyczyœæ bufor kolorów (czyli przygotuj "p³ótno" do rysowania)
-    vec3 licznik_1_pos;
-    vec3 licznik_2_pos;
+    vec3 licznik_1_pos; // prawo (jednosci)
+    vec3 licznik_2_pos; // srodek (dziesiatki)
+    vec3 licznik_3_pos; // lewo (setki)
     vec3 camera_position;
     vec3 camera_look_at;
     vec3 camera_up = vec3(0.0f,1.0f,0.0);
@@ -369,10 +392,13 @@ void drawGame(GLFWwindow* window) {
         camera_look_at = vec3(player->position.x+camera_far*cos(player->rotation.y),
                               player->position.y+0.3,
                               player->position.z-camera_far*sin(player->rotation.y));
-        licznik_1_pos = vec3(player->position.x+(camera_far/6)*cos(player->rotation.y),
+        licznik_1_pos = vec3(player->position.x+(camera_far/6)*cos(player->rotation.y-camera_far/5),
+                             player->position.y+camera_angle*1.6,
+                             player->position.z-(camera_far/6)*sin(player->rotation.y-camera_far/5));
+        licznik_2_pos = vec3(player->position.x+(camera_far/6)*cos(player->rotation.y),
                              player->position.y+camera_angle*1.6,
                              player->position.z-(camera_far/6)*sin(player->rotation.y));
-        licznik_2_pos = vec3(player->position.x+(camera_far/6)*cos(player->rotation.y+camera_far/5),
+        licznik_3_pos = vec3(player->position.x+(camera_far/6)*cos(player->rotation.y+camera_far/5),
                              player->position.y+camera_angle*1.6,
                              player->position.z-(camera_far/6)*sin(player->rotation.y+camera_far/5));
         licznik->rotation.y=player->rotation.y-90.0*PI/180.0;
@@ -384,12 +410,15 @@ void drawGame(GLFWwindow* window) {
         camera_look_at = vec3(player->position.x,
                               player->position.y,
                               player->position.z);
-        licznik_2_pos = vec3(player->position.x-(camera_far/2.5)*cos(player->rotation.y),
-                             player->position.y+8,
-                             player->position.z+(camera_far/2.5)*sin(player->rotation.y));
         licznik_1_pos = vec3(player->position.x-(camera_far/2.5)*cos(player->rotation.y+camera_far/2.5/5),
                              player->position.y+8,
                              player->position.z+(camera_far/2.5)*sin(player->rotation.y+camera_far/2.5/5));
+        licznik_2_pos = vec3(player->position.x-(camera_far/2.5)*cos(player->rotation.y),
+                             player->position.y+8,
+                             player->position.z+(camera_far/2.5)*sin(player->rotation.y));
+        licznik_3_pos = vec3(player->position.x-(camera_far/2.5)*cos(player->rotation.y-camera_far/2.5/5),
+                             player->position.y+8,
+                             player->position.z+(camera_far/2.5)*sin(player->rotation.y-camera_far/2.5/5));
         licznik->rotation.y=player->rotation.y-90.0*PI/180.0;
         licznik->zgory = true;
     } else { /// widok do tyłu
@@ -399,10 +428,13 @@ void drawGame(GLFWwindow* window) {
         camera_look_at = vec3(player->position.x-camera_far*cos(player->rotation.y),
                               player->position.y+0.3,
                               player->position.z+camera_far*sin(player->rotation.y));
-        licznik_1_pos = vec3(player->position.x-(camera_far/6)*cos(player->rotation.y),
+        licznik_1_pos = vec3(player->position.x-(camera_far/6)*cos(player->rotation.y-camera_far/5),
+                             player->position.y+camera_angle*1.6,
+                             player->position.z+(camera_far/6)*sin(player->rotation.y-camera_far/5));
+        licznik_2_pos = vec3(player->position.x-(camera_far/6)*cos(player->rotation.y),
                              player->position.y+camera_angle*1.6,
                              player->position.z+(camera_far/6)*sin(player->rotation.y));
-        licznik_2_pos = vec3(player->position.x-(camera_far/6)*cos(player->rotation.y+camera_far/5),
+        licznik_3_pos = vec3(player->position.x-(camera_far/6)*cos(player->rotation.y+camera_far/5),
                              player->position.y+camera_angle*1.6,
                              player->position.z+(camera_far/6)*sin(player->rotation.y+camera_far/5));
         licznik->rotation.y=player->rotation.y+90.0*PI/180.0;
@@ -431,7 +463,7 @@ void drawGame(GLFWwindow* window) {
         ghost_3->drawSolid(texGhost3,V);
         ghost_4->drawSolid(texGhost4,V);
     }
-    licznik->drawAll(texLicznik,V,licznik_1_pos,licznik_2_pos,coin_position.size());
+    licznik->drawAll(texLicznik,V,licznik_1_pos,licznik_2_pos,licznik_3_pos,coin_position.size());
     glfwSwapBuffers(window);
 }
 
@@ -493,6 +525,15 @@ bool checkLooser(Map* &mapa,colision_length colision_table[]) {
 
 //glowna petla
 int main(void) {
+    /// silnik muzyczny
+    if(!engine) {
+        fprintf(stderr,"Could not startup engine\n");
+        exit(EXIT_FAILURE); // error starting up the engine
+    }
+    menu_sound->setDefaultVolume(0.1f);
+    game_sound->setDefaultVolume(0.5f);
+    coin_sound->setDefaultVolume(0.8f);
+    // config gry
     configGame();
     game_start = false; // pierwsze rozpoczecie gry
     //mapa->drawMapInConsole(true);
@@ -518,6 +559,9 @@ int main(void) {
     initOpenGLProgram(window); //Operacje inicjuj¹ce
     glfwSetTime(0); //Wyzeruj timer
     //G³ówna pêtla gry
+    // piosenka na wejscie
+    menu_sound->setDefaultVolume(0.1f);
+    engine->play2D(menu_sound,true);
     while(!glfwWindowShouldClose(window)) {  //Tak d³ugo jak okno nie powinno zostaæ zamkniête
         if(game_start==false) {
             drawInfo(window,texStart);
@@ -532,10 +576,14 @@ int main(void) {
                     ghost_run = true;
                     game_win = true;
                     game_end = true;
+                    engine->stopAllSounds();
+                    engine->play2D(menu_sound,true);
                 }
                 if(checkLooser(mapa, colision_table)) {
                     game_end = true;
                     game_win = false;
+                    engine->stopAllSounds();
+                    engine->play2D(menu_sound,true);
                 }
                 doMove(mapa, colision_table, coin_position);
                 ghost_1->doGhostMove(mapa, colision_table);
@@ -559,6 +607,7 @@ int main(void) {
     }
     //Usuniecie obiektow
     usunObiekty();
+    engine->drop(); // delete engine
     //Usuniêcie tekstury z pamiêci karty graficznej – po g³ownej pêtli
     glDeleteTextures(1,&texSciana);
     glDeleteTextures(1,&texPodloga);

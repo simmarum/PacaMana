@@ -160,7 +160,7 @@ void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
         obrot = abs((int)(rotation.y/((PI-0.1f)/2)));
         // Przegląd
         // proby aby nie szedl do tylu za czesto
-        int proby = 3;
+        int proby = 5;
         while(proby>0) {
             int losowanie = rand() % mozliwosci ; // losowanie numeru kierunku
             int iter = 0;

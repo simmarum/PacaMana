@@ -691,7 +691,7 @@
 	"licznik.h"
 	"loaderOBJ.h"
 
-1497735679 source:e:\github\pacamana\coin.cpp
+1497738760 source:e:\github\pacamana\coin.cpp
 	<stdio.h>
 	<cstdlib>
 	"coin.h"
@@ -1246,7 +1246,7 @@
 
 1497131557 e:\github\pacamana\struct.h
 
-1497738594 e:\github\pacamana\map.h
+1497782553 e:\github\pacamana\map.h
 	"wall.h"
 	"constants.h"
 
@@ -1264,7 +1264,7 @@
 	<vector>
 	"struct.h"
 
-1497735679 source:e:\github\pacamana\floor.cpp
+1497738760 source:e:\github\pacamana\floor.cpp
 	<stdio.h>
 	<cstdlib>
 	"constants.h"
@@ -1274,7 +1274,7 @@
 1497131556 e:\github\pacamana\floor.h
 	"model.h"
 
-1497735903 source:e:\github\pacamana\ghost.cpp
+1497782553 source:e:\github\pacamana\ghost.cpp
 	<stdio.h>
 	<cstdlib>
 	"ghost.h"
@@ -1285,21 +1285,22 @@
 	"model.h"
 	"map.h"
 
-1497630661 e:\github\pacamana\move.h
+1497782031 e:\github\pacamana\move.h
 	"player.h"
 	"ghost.h"
 
-1497630661 e:\github\pacamana\player.h
+1497781987 e:\github\pacamana\player.h
 	"model.h"
 	"map.h"
+	"irr_klang/irrKlang.h"
 
-1497195504 source:e:\github\pacamana\licznik.cpp
+1497778191 source:e:\github\pacamana\licznik.cpp
 	<stdio.h>
 	<cstdlib>
 	"licznik.h"
 	"loaderOBJ.h"
 
-1497177397 e:\github\pacamana\licznik.h
+1497778191 e:\github\pacamana\licznik.h
 	"model.h"
 
 1497177397 source:e:\github\pacamana\loaderobj.cpp
@@ -1326,7 +1327,7 @@
 	<iostream>
 	"lodepng.h"
 
-1497737991 source:e:\github\pacamana\main_file.cpp
+1497782486 source:e:\github\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1344,6 +1345,7 @@
 	"move.h"
 	"loaderOBJ.h"
 	<string>
+	"irr_klang/irrKlang.h"
 
 1497195504 e:\github\pacamana\allmodels.h
 	"wall.h"
@@ -1354,7 +1356,7 @@
 	"licznik.h"
 	"ghost.h"
 
-1497736008 source:e:\github\pacamana\map.cpp
+1497738760 source:e:\github\pacamana\map.cpp
 	<stdlib.h>
 	<stdio.h>
 	<iostream>
@@ -1365,19 +1367,116 @@
 1497177397 source:e:\github\pacamana\model.cpp
 	"model.h"
 
-1497630661 source:e:\github\pacamana\move.cpp
+1497782078 source:e:\github\pacamana\move.cpp
 	<stdio.h>
 	<move.h>
 
-1497736161 source:e:\github\pacamana\player.cpp
+1497782265 source:e:\github\pacamana\player.cpp
 	<stdio.h>
 	<cstdlib>
 	"player.h"
 	"loaderOBJ.h"
 
-1497736242 source:e:\github\pacamana\wall.cpp
+1497738760 source:e:\github\pacamana\wall.cpp
 	<stdio.h>
 	<cstdlib>
 	"wall.h"
 	"loaderOBJ.h"
+
+1398487410 e:\github\pacamana\irr_klang\irrklang.h
+	"ik_irrKlangTypes.h"
+	"ik_vec3d.h"
+	"ik_IRefCounted.h"
+	"ik_IVirtualRefCounted.h"
+	"ik_ESoundOutputDrivers.h"
+	"ik_ESoundEngineOptions.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+	"ik_ISoundEngine.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_IAudioStream.h"
+	"ik_IAudioStreamLoader.h"
+	"ik_ISoundEffectControl.h"
+	"ik_ISoundStopEventReceiver.h"
+	"ik_IFileFactory.h"
+	"ik_IFileReader.h"
+	"ik_ISoundDeviceList.h"
+	"ik_IAudioRecorder.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1394099054 e:\github\pacamana\irr_klang\ik_irrklangtypes.h
+	<wchar.h>
+
+1399012338 e:\github\pacamana\irr_klang\ik_vec3d.h
+	<math.h>
+	"ik_irrKlangTypes.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_irefcounted.h
+	"ik_irrKlangTypes.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_ivirtualrefcounted.h
+	"ik_irrKlangTypes.h"
+
+1394088900 e:\github\pacamana\irr_klang\ik_esoundoutputdrivers.h
+
+1394088894 e:\github\pacamana\irr_klang\ik_esoundengineoptions.h
+
+1394088894 e:\github\pacamana\irr_klang\ik_estreammodes.h
+
+1394088894 e:\github\pacamana\irr_klang\ik_saudiostreamformat.h
+	"ik_IRefCounted.h"
+
+1394096464 e:\github\pacamana\irr_klang\ik_isoundengine.h
+	"ik_IRefCounted.h"
+	"ik_vec3d.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_EStreamModes.h"
+	"ik_IFileFactory.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_isoundsource.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_isound.h
+	"ik_IVirtualRefCounted.h"
+	"ik_ISoundEffectControl.h"
+	"ik_vec3d.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_isoundeffectcontrol.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+
+1394096452 e:\github\pacamana\irr_klang\ik_ifilefactory.h
+	"ik_IRefCounted.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_isoundmixedoutputreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_iaudiostream.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_iaudiostreamloader.h
+	"ik_IRefCounted.h"
+	"ik_IFileReader.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_ifilereader.h
+	"ik_IRefCounted.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_isoundstopeventreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 e:\github\pacamana\irr_klang\ik_isounddevicelist.h
+	"ik_IRefCounted.h"
+
+1394096448 e:\github\pacamana\irr_klang\ik_iaudiorecorder.h
+	"ik_IRefCounted.h"
+	"ik_ISoundSource.h"
 

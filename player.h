@@ -3,6 +3,8 @@
 
 #include "model.h"
 #include "map.h"
+#include "irr_klang/irrKlang.h" // muzyka
+
 
 class Player: public Model {
 public:
@@ -10,7 +12,7 @@ public:
     ~Player();
     void drawSolid(GLuint &tex,mat4 &V);
     void WallDetect(Map* &mapa,colision_length colision_table[]);
-    void CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position);
+    void CoinDetect(colision_length colision_table[],std::vector <glm::vec3> &coin_position,irrklang::ISoundEngine* engine,irrklang::ISoundSource* coin_sound);
 
     float rotation_speed;
 
