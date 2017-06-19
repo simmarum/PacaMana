@@ -130,11 +130,12 @@ bool loadOBJ(const char * path,
         uv = temp_uvs[ uvIndex+1 ];
         out_uvs.push_back(uv);
     }
+    return true;
 }
 
 void wypiszvector(std::vector <float> name,char c[],int modulo) {
     printf("\n%s\n",c);
-    for(int i=0; i<name.size(); i++) {
+    for(unsigned int i=0; i<name.size(); i++) {
         if(i%modulo == 0) printf("\n");
         if(i%(modulo*modulo)==0) printf("%d\n",i/(modulo*modulo));
         printf("%f\t",name[i]);

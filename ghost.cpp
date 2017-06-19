@@ -130,7 +130,6 @@ void Ghost::drawSolid_2(GLuint &tex,mat4 &V) {
 void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
     int px = (int)(this->position.x+0.5f);
     int pz = (int)(this->position.z+0.5f);
-
     // mamy nowy kafelek
     if(fabs(this->position.x - oldPX) > 1.0 || fabs(this->position.z - oldPZ) > 1.0) {
         // Zaznaczenie zmiany położenia
@@ -181,7 +180,6 @@ void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
         }
     } else {
         // Kontynuacja ruchu
-        int temp_obrot;
         switch(przemieszczenieID) {
         case 0: {
             // ustalenie kierunku aby po ilus tam obrotach nie chodzil po skosie
@@ -202,9 +200,15 @@ void Ghost::doGhostMove(Map* &mapa,colision_length colision_table[]) {
             break;
         }
         case 2: {
-            // ustalenie kierunku aby po ilus tam obrotach nie chodzil po skosie
-            this->rotation.y = -(abs((int)(rotation.y/((PI-0.2f)/2))))*(PI/2);
-            goGhostBACK(this, mapa, colision_table);
+            // dodatkowy warunek w ifie bo jak byl obrot o  z 1st na 350 stopni to sie sypalo bo roznica byla wieksza niz 90 st...
+            if((fabs(fabs(oldRotation) - fabs(rotation.y)) < ((PI-0.2f)))
+                    || (fabs(fabs(oldRotation) - fabs(rotation.y)) > (2*PI-((PI-0.2f))))) {
+                rotateGhostRIGHT(this);
+            } else {
+                // ustalenie kierunku aby po ilus tam obrotach nie chodzil po skosie
+                this->rotation.y = -(abs((int)(rotation.y/((PI-0.2f)/2))))*(PI/2);
+                goGhostSTRAIGHT(this, mapa, colision_table);
+            }
             break;
         }
         case 3: {

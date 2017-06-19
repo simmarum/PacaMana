@@ -25,6 +25,7 @@ public:
     vec3 scale2;
     float speed2;
     float rotation_temp;
+    float rotation_temp2;
 private:
     void findPosition(Map* &mapa);
     void drawSolid_1(GLuint &tex,mat4 &V);

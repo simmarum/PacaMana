@@ -4,7 +4,6 @@
 #include "player.h"
 #include "loaderOBJ.h"
 
-
 #define mPlayer1 "modeleBlend/pacman1.obj"
 #define mPlayer2 "modeleBlend/pacman2.obj"
 
@@ -33,7 +32,8 @@ Player::Player(Map* &mapa,colision_length &colision_length) {
     rotation2 = rotation;
     scale2 = scale;
     speed2 = 5;
-    rotation_temp = rotation2.z;
+    rotation_temp = rotation.y;
+    rotation_temp2 = rotation2.z;
     findPosition(mapa);
 }
 
@@ -101,9 +101,9 @@ void Player::drawSolid_2(GLuint &tex,mat4 &V) {
     mat4 M=mat4(1.0f);
     M=translate(M,this->position);
     M=rotate(M,this->rotation.y,vec3(0.0,1.0,0.0));
-    this->rotation_temp -= (float)(glfwGetTime()*speed2);
-    this->rotation_temp = (float)(this->rotation_temp - 2*PI*(ceil(this->rotation_temp/(2*PI))));
-    this->rotation2.z = (float)((sin(this->rotation_temp)-1)*0.5);
+    this->rotation_temp2 -= (float)(glfwGetTime()*speed2);
+    this->rotation_temp2 = (float)(this->rotation_temp2 - 2*PI*(ceil(this->rotation_temp2/(2*PI))));
+    this->rotation2.z = (float)((sin(this->rotation_temp2)-1)*0.5);
     this->rotation2.z += this->rotation.z;
     M=rotate(M,this->rotation2.z,vec3(0.0,0.0,1.0));
     glLoadMatrixf(value_ptr(V*M));

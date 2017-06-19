@@ -40,7 +40,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <string>
 
 #include "irr_klang/irrKlang.h" // muzyka
-#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+//#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
 #define szerokoscOkna 500
 #define wysokoscOkna 500
@@ -87,7 +87,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define LOOK_BACK 5
 
 // ustawienia gry
-#define BIG_COIN_NUMBER 17
+#define BIG_COIN_NUMBER 5
 
 using namespace glm;
 using namespace irrklang;
@@ -186,6 +186,7 @@ void configGame() {
     ghost_4->speed = 2.0;
     // obliczenie co ile monet beda uciekaly duszki
     modulo_coin = coin_position.size() / (BIG_COIN_NUMBER+1);
+    if(modulo_coin == 0 || modulo_coin == 1) modulo_coin = 2;
 }
 
 // funkcja ktora powoduje ruch w kazdym kierunku (po skosie dwa klawisze tez) ogolnie od klawiszy jest
@@ -296,8 +297,8 @@ void LetItBeLight() {
     GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f }; // otoczenia
     GLfloat diffuseLight[] = { 0.5f, 0.5f, 0.5, 1.0f }; // rozproszenia
     GLfloat specularLight[] = { 0.9f, 0.9f, 0.9f, 1.0f }; // odbicia
-    GLfloat position0[] = { 4.0f, 2.0f, -1.0f, 1.0f }; // pozycja za pacmanem po prawej
-    GLfloat position1[] = { -4.0, 2.0f, -1.0f, 1.0f }; // pozycja za pacmanem po lewej
+    GLfloat position0[] = { 0.0f, 2.0f, 2.0f, 1.0f }; // pozycja za pacmanem po prawej
+    GLfloat position1[] = { -2.0, 2.0f, 2.0f, 1.0f }; // pozycja za pacmanem po lewej
     //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -305,7 +306,7 @@ void LetItBeLight() {
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
     glLightfv(GL_LIGHT0, GL_POSITION, position0);
-    glEnable(GL_LIGHT1);
+    //glEnable(GL_LIGHT1);
     glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
     glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
