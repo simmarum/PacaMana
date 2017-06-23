@@ -1246,7 +1246,7 @@
 
 1497131557 e:\github\pacamana\struct.h
 
-1497890994 e:\github\pacamana\map.h
+1498254294 e:\github\pacamana\map.h
 	"wall.h"
 	"constants.h"
 
@@ -1274,22 +1274,22 @@
 1497131556 e:\github\pacamana\floor.h
 	"model.h"
 
-1497889896 source:e:\github\pacamana\ghost.cpp
+1498261759 source:e:\github\pacamana\ghost.cpp
 	<stdio.h>
 	<cstdlib>
 	"ghost.h"
 	"loaderOBJ.h"
 	"move.h"
 
-1497630661 e:\github\pacamana\ghost.h
+1498261756 e:\github\pacamana\ghost.h
 	"model.h"
 	"map.h"
 
-1497782946 e:\github\pacamana\move.h
+1498256097 e:\github\pacamana\move.h
 	"player.h"
 	"ghost.h"
 
-1497890912 e:\github\pacamana\player.h
+1497893147 e:\github\pacamana\player.h
 	"model.h"
 	"map.h"
 	"irr_klang/irrKlang.h"
@@ -1303,7 +1303,7 @@
 1497782946 e:\github\pacamana\licznik.h
 	"model.h"
 
-1497889896 source:e:\github\pacamana\loaderobj.cpp
+1497893147 source:e:\github\pacamana\loaderobj.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1327,7 +1327,7 @@
 	<iostream>
 	"lodepng.h"
 
-1497892506 source:e:\github\pacamana\main_file.cpp
+1498261976 source:e:\github\pacamana\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1347,7 +1347,7 @@
 	<string>
 	"irr_klang/irrKlang.h"
 
-1497195504 e:\github\pacamana\allmodels.h
+1498252951 e:\github\pacamana\allmodels.h
 	"wall.h"
 	"floor.h"
 	"player.h"
@@ -1355,6 +1355,7 @@
 	"map.h"
 	"licznik.h"
 	"ghost.h"
+	"info.h"
 
 1497738760 source:e:\github\pacamana\map.cpp
 	<stdlib.h>
@@ -1367,11 +1368,11 @@
 1497177397 source:e:\github\pacamana\model.cpp
 	"model.h"
 
-1497782946 source:e:\github\pacamana\move.cpp
+1498261766 source:e:\github\pacamana\move.cpp
 	<stdio.h>
 	<move.h>
 
-1497890978 source:e:\github\pacamana\player.cpp
+1497893147 source:e:\github\pacamana\player.cpp
 	<stdio.h>
 	<cstdlib>
 	"player.h"
@@ -1479,4 +1480,13 @@
 1497782946 e:\github\pacamana\irr_klang\ik_iaudiorecorder.h
 	"ik_IRefCounted.h"
 	"ik_ISoundSource.h"
+
+1498252853 source:e:\github\pacamana\info.cpp
+	<stdio.h>
+	<cstdlib>
+	"info.h"
+	"loaderOBJ.h"
+
+1498252992 e:\github\pacamana\info.h
+	"model.h"
 

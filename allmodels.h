@@ -27,6 +27,6 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "map.h"
 #include "licznik.h"
 #include "ghost.h"
-
+#include "info.h"
 
 #endif

@@ -108,7 +108,7 @@ Ghost *ghost_1;
 Ghost *ghost_2;
 Ghost *ghost_3;
 Ghost *ghost_4;
-Wall *ginfo = new Wall(unvalue); // ekran poczatkowy, koncowy...
+Info *ginfo = new Info(unvalue); // ekran poczatkowy, koncowy...
 
 bool CAMERA_PACMAN = true; // kamera zza pacmana
 bool fullscreen = false; // czy pelen ekran
@@ -116,6 +116,8 @@ bool fullscreen = false; // czy pelen ekran
 float aspect=1.0f; //Aktualny stosunek szerokoœci do wysokoœci okna
 float camera_far = 1.235; // odleglosc kamery (promiec okregu po ktorym porusza sie kamera wokol PacMana)
 float camera_angle = 0.4; // odleglosc camery nad PacManem w osi Y
+vec3 camera_position;
+vec3 camera_look_at;
 
 bool ghost_run = false; // czy duszki uciekaja przed pacmanem
 bool game_start = false; // czy gra sie juz rozpoczela (byl ekran powitalny)
@@ -146,7 +148,11 @@ ISoundEngine* engine = createIrrKlangDevice(); // silnik muzyczny
 ISoundSource* menu_sound = engine->addSoundSourceFromFile("media/getout.ogg");
 ISoundSource* game_sound = engine->addSoundSourceFromFile("media/ophelia.mp3");
 ISoundSource* coin_sound = engine->addSoundSourceFromFile("media/bell.wav");
-
+ISoundSource* ghost_sound = engine->addSoundSourceFromFile("media/ghost.wav");
+ISound* music_ghost_1;
+ISound* music_ghost_2;
+ISound* music_ghost_3;
+ISound* music_ghost_4;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -261,6 +267,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             }
         } else {
             if(action == GLFW_PRESS) {
+                if(key == GLFW_KEY_ESCAPE) {
+                    game_win = false;
+                    game_end = true;
+                    engine->stopAllSounds();
+                    engine->play2D(menu_sound,true);
+                }
                 if(key == K_LEFT) keys[LEFT] = true;
                 if(key == K_RIGHT) keys[RIGHT] = true;
                 if(key == K_UP) keys[UP] = true;
@@ -383,8 +395,6 @@ void drawGame(GLFWwindow* window) {
     vec3 licznik_1_pos; // prawo (jednosci)
     vec3 licznik_2_pos; // srodek (dziesiatki)
     vec3 licznik_3_pos; // lewo (setki)
-    vec3 camera_position;
-    vec3 camera_look_at;
     vec3 camera_up = vec3(0.0f,1.0f,0.0);
     if(CAMERA_PACMAN && !keys[LOOK_BACK]) { /// widok do przodu
         camera_position = vec3(player->position.x-camera_far*cos(player->rotation.y),
@@ -409,7 +419,7 @@ void drawGame(GLFWwindow* window) {
                                player->position.y + 10,
                                player->position.z + camera_far*sin(player->rotation.y));
         camera_look_at = vec3(player->position.x,
-                              player->position.y,
+                              player->position.y-1,
                               player->position.z);
         licznik_1_pos = vec3(player->position.x-(camera_far/2.5)*cos(player->rotation.y+camera_far/2.5/5),
                              player->position.y+8,
@@ -524,19 +534,25 @@ bool checkLooser(Map* &mapa,colision_length colision_table[]) {
     return false;
 }
 
-//glowna petla
-int main(void) {
-    /// silnik muzyczny
+void configSound() {
     if(!engine) {
         fprintf(stderr,"Could not startup engine\n");
         exit(EXIT_FAILURE); // error starting up the engine
     }
-    menu_sound->setDefaultVolume(0.1f);
-    game_sound->setDefaultVolume(0.5f);
-    coin_sound->setDefaultVolume(0.8f);
-    // config gry
+    engine->setSoundVolume(0.1f);
+    menu_sound->setDefaultVolume(0.001f);
+    game_sound->setDefaultVolume(0.2f);
+    coin_sound->setDefaultVolume(0.3f);
+}
+
+//glowna petla
+int main(void) {
+    /// config gry
     configGame();
-    game_start = false; // pierwsze rozpoczecie gry
+    /// silnik muzyczny
+    configSound();
+    // pierwsze rozpoczecie gry
+    game_start = false;
     //mapa->drawMapInConsole(true);
     srand(time(NULL));
     GLFWwindow* window; //WskaŸnik na obiekt reprezentuj¹cy okno

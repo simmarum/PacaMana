@@ -42,8 +42,3 @@ void goGhostSTRAIGHT(Ghost *ghost, Map* &mapa, colision_length colision_table[])
     ghost->position.z -= sin(ghost->rotation.y)*ghost->speed*glfwGetTime(); // ruch z
     ghost->WallDetect(mapa, colision_table); // wykrycie kolizji
 }
-void goGhostBACK(Ghost *ghost, Map* &mapa, colision_length colision_table[]) {
-    ghost->position.x -= cos(ghost->rotation.y)*ghost->speed*glfwGetTime(); // ruch x
-    ghost->position.z += sin(ghost->rotation.y)*ghost->speed*glfwGetTime(); // ruch z
-    ghost->WallDetect(mapa,colision_table); // wykrycie kolizji
-}

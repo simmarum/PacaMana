@@ -59,6 +59,8 @@
 		<Unit filename="floor.h" />
 		<Unit filename="ghost.cpp" />
 		<Unit filename="ghost.h" />
+		<Unit filename="info.cpp" />
+		<Unit filename="info.h" />
 		<Unit filename="licznik.cpp" />
 		<Unit filename="licznik.h" />
 		<Unit filename="loaderOBJ.cpp" />
