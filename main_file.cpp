@@ -148,7 +148,6 @@ ISoundEngine* engine = createIrrKlangDevice(); // silnik muzyczny
 ISoundSource* menu_sound = engine->addSoundSourceFromFile("media/getout.ogg");
 ISoundSource* game_sound = engine->addSoundSourceFromFile("media/ophelia.mp3");
 ISoundSource* coin_sound = engine->addSoundSourceFromFile("media/bell.wav");
-ISoundSource* ghost_sound = engine->addSoundSourceFromFile("media/ghost.wav");
 ISound* music_ghost_1;
 ISound* music_ghost_2;
 ISound* music_ghost_3;
@@ -310,15 +309,15 @@ void LetItBeLight() {
     GLfloat diffuseLight[] = { 0.5f, 0.5f, 0.5, 1.0f }; // rozproszenia
     GLfloat specularLight[] = { 0.9f, 0.9f, 0.9f, 1.0f }; // odbicia
     GLfloat position0[] = { 0.0f, 2.0f, 2.0f, 1.0f }; // pozycja za pacmanem po prawej
-    GLfloat position1[] = { -2.0, 2.0f, 2.0f, 1.0f }; // pozycja za pacmanem po lewej
-    //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
+    GLfloat position1[] = { 0.0, 2.0f, -2.0f, 1.0f }; // pozycja za pacmanem po lewej
+    //
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
     glLightfv(GL_LIGHT0, GL_POSITION, position0);
-    //glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT1);
     glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
     glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
